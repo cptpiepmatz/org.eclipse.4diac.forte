@@ -15,13 +15,13 @@ namespace forte {
         virtual ~CDDSComLayer();
 
         // necessary methods for CComLayer implementation
-        EComResponse openConnection(char *pa_acLayerParameter);
-        void closeConnection();
+        EComResponse openConnection(char *pa_acLayerParameter) override;
+        void closeConnection() override;
 
-        EComResponse sendData(void *paData, unsigned int paSize);
-        EComResponse recvData(const void *paData, unsigned int paSize);
+        EComResponse sendData(void *paData, unsigned int paSize) override;
+        EComResponse recvData(const void *paData, unsigned int paSize) override;
 
-        EComResponse processInterrupt();
+        EComResponse processInterrupt() override;
 
         // other methods
 
