@@ -1,7 +1,7 @@
 #ifndef _DDSCOMLAYER_H_
 #define _DDSCOMLAYER_H_
 
-#include "ddspublisher.h"
+#include "ddspubsub.h"
 
 #include "comlayer.h"
 
