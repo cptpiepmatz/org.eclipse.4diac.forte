@@ -1,5 +1,5 @@
-#ifndef _DDSPUBLISHER_H_
-#define _DDSPUBLISHER_H_
+#ifndef _DDSPUBSUB_H_
+#define _DDSPUBSUB_H_
 
 #include "basecommfb.h"
 #include "stringdict.h"
@@ -39,4 +39,4 @@ class CDDSPublisher {
     DataWriter* writer;
 };
 
-#endif /* _DDSPUBLISHER_H_ */
+#endif /* _DDSPUBSUB_H_ */

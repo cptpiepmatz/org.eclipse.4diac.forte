@@ -1,7 +1,7 @@
 #ifndef _COM_DDS_TYPES_STD_MSGS_STRING_PUBLISHER_H_
 #define _COM_DDS_TYPES_STD_MSGS_STRING_PUBLISHER_H_
 
-#include "ddspublisher.h"
+#include "ddspubsub.h"
 
 #include "StringPubSubTypes.h"
 using namespace std_msgs::msg;
