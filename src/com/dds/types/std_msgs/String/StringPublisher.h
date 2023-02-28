@@ -8,11 +8,11 @@ using namespace std_msgs::msg;
 
 namespace std_msgs {
 
-class StringPublisher : public CDDSPubSub {
+class StringPubSub : public CDDSPubSub {
   public:
     static constexpr char* PUBLIC_TOPIC_TYPE = "std_msgs/String";
 
-    StringPublisher(std::string topicName) : 
+    StringPubSub(std::string topicName) : 
       CDDSPubSub(topicName),
       type(new StringPubSubType()) {}
 

@@ -41,7 +41,7 @@ bool CDDSPubSub::init() {
 }
 
 CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType) {
-  if (topicType == "std_msgs/String") return new std_msgs::StringPublisher(topicName);
+  if (topicType == "std_msgs/String") return new std_msgs::StringPubSub(topicName);
 
   // add other topic types here
 
