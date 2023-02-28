@@ -25,3 +25,6 @@ file_list.txt
 *.a
 /src/forte
 /src/src
+
+# build docs
+doc/api_doc
