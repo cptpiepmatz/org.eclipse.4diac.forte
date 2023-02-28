@@ -12,14 +12,14 @@
 
 using namespace eprosima::fastdds::dds;
 
-CDDSPublisher::~CDDSPublisher() {
+CDDSPubSub::~CDDSPubSub() {
   if (writer != nullptr) publisher->delete_datawriter(writer);
   if (publisher != nullptr) participant->delete_publisher(publisher);
   if (topic != nullptr) participant->delete_topic(topic);
   DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
-bool CDDSPublisher::init() {
+bool CDDSPubSub::init() {
   DomainParticipantQos participantQos;
   participantQos.name("4diac Publisher");
   participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
@@ -40,7 +40,7 @@ bool CDDSPublisher::init() {
   return true;
 }
 
-CDDSPublisher* CDDSPublisher::selectPublisher(std::string topicName, std::string topicType) {
+CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType) {
   if (topicType == "std_msgs/String") return new std_msgs::StringPublisher(topicName);
 
   // add other topic types here

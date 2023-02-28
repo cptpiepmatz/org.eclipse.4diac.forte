@@ -31,7 +31,7 @@ namespace forte {
         std::string m_TopicName;
         std::string m_TopicType;
 
-        CDDSPublisher* publisher;
+        CDDSPubSub* publisher;
     };
 
   }

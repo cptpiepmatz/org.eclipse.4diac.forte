@@ -13,16 +13,16 @@
 
 using namespace eprosima::fastdds::dds;
 
-class CDDSPublisher {
+class CDDSPubSub {
   public:
-    CDDSPublisher(std::string topicName) : 
+    CDDSPubSub(std::string topicName) : 
       topicName(topicName),
       participant(nullptr), 
       publisher(nullptr), 
       topic(nullptr), 
       writer(nullptr) {}
-    virtual ~CDDSPublisher();
-    static CDDSPublisher* selectPublisher(std::string topicName, std::string topicType);
+    virtual ~CDDSPubSub();
+    static CDDSPubSub* selectPubSub(std::string topicName, std::string topicType);
 
     bool init();
 

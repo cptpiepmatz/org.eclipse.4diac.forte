@@ -60,7 +60,7 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
 
     CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
     
-    this->publisher = CDDSPublisher::selectPublisher(this->m_TopicName, this->m_TopicType);
+    this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
     if (this->publisher == nullptr) {
       DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
       return EComResponse::e_InitInvalidId;
