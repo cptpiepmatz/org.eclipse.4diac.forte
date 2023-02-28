@@ -79,7 +79,7 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
 }
 
 void CDDSComLayer::closeConnection() {
-  // TODO: rember to destruct publisher here
+  if (this->publisher != nullptr) delete this->publisher;
 }
 
 EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
