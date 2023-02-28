@@ -26,6 +26,7 @@ bool CDDSPublisher::init() {
   if (participant == nullptr) return false;
 
   std::string typeName = this->registerType();
+  DEVLOG_DEBUG(("[DDS Publisher] Registered type '" + typeName + "'.\n").c_str());
 
   topic = participant->create_topic(this->topicName, typeName, TOPIC_QOS_DEFAULT);
   if (topic == nullptr) return false;

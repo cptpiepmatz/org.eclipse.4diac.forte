@@ -18,10 +18,12 @@ bool StringPublisher::validateType(const CStringDictionary::TStringId typeId) {
 
 bool StringPublisher::publish(CIEC_STRUCT* data) {
   CIEC_ROS2_std_msgs__String *casted = (CIEC_ROS2_std_msgs__String *) data;
-  std::cout << casted->data().getValue() << std::endl;
+  std::string value = casted->data().getValue();
+  
+  DEVLOG_DEBUG(("[DDS Publisher/std_msgs/String] Sent message '" + value + "'.\n").c_str());
 
   String string;
-  string.data(casted->data().getValue());
+  string.data(value);
 
   return this->writer->write(&string);
 }
