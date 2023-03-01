@@ -19,6 +19,7 @@ class StringPubSub : public CDDSPubSub {
     std::string registerType() override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
+    CIEC_STRUCT receive() override;
 
   private:
     TypeSupport type;
