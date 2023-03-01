@@ -29,7 +29,7 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
   // extract topic name, before the colon and topic type, 
   // after the colon from the parameters
   std::string layerParams = pa_acLayerParameter;
-  int colon = static_cast<int>(layerParams.find_last_of(":"));
+  int colon = static_cast<int>(layerParams.find_first_of(":"));
 
   this->m_TopicName = layerParams.substr(0, colon);
   DEVLOG_DEBUG(("[DDS Layer] Topic name is '" + this->m_TopicName + "'.\n").c_str());
@@ -64,7 +64,8 @@ EComResponse CDDSComLayer::openPublisherConnection() {
 
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
   
-  this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
+  CDDSHandler handler = this->getExtEvHandler<CDDSHandler>();
+  this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType, &handler);
   if (this->publisher == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
     return EComResponse::e_InitInvalidId;
@@ -94,7 +95,8 @@ EComResponse CDDSComLayer::openSubscriberConnection() {
 
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getRDs();
   
-  this->subscriber = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
+  CDDSHandler handler = this->getExtEvHandler<CDDSHandler>();
+  this->subscriber = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType, &handler);
   if (this->subscriber == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
     return EComResponse::e_InitInvalidId;
@@ -108,7 +110,7 @@ EComResponse CDDSComLayer::openSubscriberConnection() {
     return EComResponse::e_InitInvalidId;
   }
 
-  getExtEvHandler<CDDSHandler>().registerTopic(this->m_TopicName, this);
+  this->getExtEvHandler<CDDSHandler>().registerTopic(this->m_TopicName, this);
 
   return EComResponse::e_InitOk;
 }
@@ -117,7 +119,7 @@ void CDDSComLayer::closeConnection() {
   if (this->publisher != nullptr) delete this->publisher;
   if (this->subscriber != nullptr) {
     delete this->subscriber;
-    getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_TopicName);
+    this->getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_TopicName);
   }
 }
 

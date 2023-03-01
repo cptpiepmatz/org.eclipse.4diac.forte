@@ -20,21 +20,19 @@
 #include<fastdds/dds/subscriber/DataReader.hpp>
 #include<fastdds/dds/subscriber/DataReaderListener.hpp>
 
-#include "ddshandler.h"
-
 using namespace eprosima::fastdds::dds;
 
 class CDDSPubSub {
   public:
-    CDDSPubSub(std::string topicName, CDDSHandler* handler) : 
+    CDDSPubSub(std::string topicName, DataReaderListener* readerListener) : 
       topicName(topicName),
-      handler(handler),
+      readerListener(readerListener),
       participant(nullptr), 
       topic(nullptr),
       publisher(nullptr),  
       writer(nullptr) {}
     virtual ~CDDSPubSub();
-    static CDDSPubSub* selectPubSub(std::string topicName, std::string topicType, CDDSHandler* handler);
+    static CDDSPubSub* selectPubSub(std::string topicName, std::string topicType, DataReaderListener* readerListener);
 
     bool initCommon();
     bool initPublisher();
@@ -47,8 +45,6 @@ class CDDSPubSub {
     virtual CIEC_STRUCT receive() = 0;
 
   protected:
-    CDDSHandler* handler;
-
     std::string topicName;
     std::string topicType;
 
@@ -61,17 +57,6 @@ class CDDSPubSub {
     Subscriber* subscriber;
     DataReader* reader;
     DataReaderListener* readerListener;
-
-    class SubListener : public DataReaderListener {
-      public:
-        SubListener(CDDSPubSub* pubSub) : outer(pubSub) {}
-
-        // call the handler, that a message arrived
-        void on_data_available(DataReader* reader) override;
-
-      private:
-        CDDSPubSub* outer;
-    };
 };
 
 #endif /* _DDSPUBSUB_H_ */

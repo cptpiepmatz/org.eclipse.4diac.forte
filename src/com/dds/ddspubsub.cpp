@@ -33,7 +33,7 @@ bool CDDSPubSub::initCommon() {
   if (this->participant == nullptr) return false;
 
   this->topicType = this->registerType();
-  DEVLOG_DEBUG(("[DDS Publisher] Registered type '" + this->topicType + "'.\n").c_str());
+  DEVLOG_DEBUG(("[DDS PubSub] Registered type '" + this->topicType + "'.\n").c_str());
 
   this->topic = this->participant->create_topic(this->topicName, this->topicType, TOPIC_QOS_DEFAULT);
   if (this->topic == nullptr) return false;
@@ -50,6 +50,7 @@ bool CDDSPubSub::initPublisher() {
   this->writer = this->publisher->create_datawriter(this->topic, DATAWRITER_QOS_DEFAULT, nullptr);
   if (this->writer == nullptr) return false;
 
+  DEVLOG_DEBUG("[DDS PubSub] Initialized publisher.\n");
   return true;
 }
 
@@ -59,21 +60,17 @@ bool CDDSPubSub::initSubscriber() {
   this->subscriber = this->participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
   if (this->subscriber == nullptr) return false;
 
-  this->readerListener = new SubListener(this);
   this->reader = this->subscriber->create_datareader(this->topic, DATAREADER_QOS_DEFAULT, this->readerListener);
   if (this->reader == nullptr) return false;
 
+  DEVLOG_DEBUG("[DDS PubSub] Initialized subscriber.\n");
   return true;
 }
 
-CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType, CDDSHandler* handler) {
-  if (topicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(topicName, handler);
+CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType, DataReaderListener* readerListener) {
+  if (topicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(topicName, readerListener);
 
   // add other topic types here
 
   return nullptr;
-}
-
-void CDDSPubSub::SubListener::on_data_available(DataReader* reader) {
-  this->outer->handler->onDataAvailable(this->outer->topicName);
 }
