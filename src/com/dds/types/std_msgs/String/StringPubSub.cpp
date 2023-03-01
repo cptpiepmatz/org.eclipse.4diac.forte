@@ -1,6 +1,9 @@
 #include "modules/ros2/std_msgs/String/ROS2_std_msgs__String.h"
 
 #include "StringPubSub.h"
+#ifdef FORTE_ENABLE_GENERATED_SOURCE_CPP
+#include "StringPubSub_gen.cpp"
+#endif
 
 using namespace std_msgs;
 
@@ -23,4 +26,16 @@ bool StringPubSub::publish(CIEC_STRUCT* data) {
   string.data(value);
 
   return this->writer->write(&string);
+}
+
+CIEC_STRUCT StringPubSub::receive() {
+  String string;
+  SampleInfo info;
+  this->reader->take_next_sample(&string, &info);
+
+  CIEC_STRING ciecString = CIEC_STRING(string.data().c_str());
+  CIEC_ROS2_std_msgs__String ciecStruct = CIEC_ROS2_std_msgs__String();
+  ciecStruct.data() = ciecString;
+
+  return ciecStruct;
 }

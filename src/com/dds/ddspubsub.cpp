@@ -1,5 +1,6 @@
 #include "ddspubsub.h"
-#include "types/std_msgs/String/StringPublisher.h"
+#include "ddshandler.h"
+#include "types/std_msgs/String/StringPubSub.h"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp> 
@@ -11,39 +12,68 @@
 #include "basecommfb.h"
 
 using namespace eprosima::fastdds::dds;
+using namespace forte::com_infra;
 
 CDDSPubSub::~CDDSPubSub() {
-  if (writer != nullptr) publisher->delete_datawriter(writer);
-  if (publisher != nullptr) participant->delete_publisher(publisher);
-  if (topic != nullptr) participant->delete_topic(topic);
-  DomainParticipantFactory::get_instance()->delete_participant(participant);
+  if (this->writer != nullptr) this->publisher->delete_datawriter(this->writer);
+  if (this->publisher != nullptr) this->participant->delete_publisher(this->publisher);
+
+  if (this->reader != nullptr) this->subscriber->delete_datareader(this->reader);
+  if (this->readerListener != nullptr) delete this->readerListener;
+  if (this->subscriber != nullptr) this->participant->delete_subscriber(this->subscriber);
+
+  if (this->topic != nullptr) this->participant->delete_topic(this->topic);
+  DomainParticipantFactory::get_instance()->delete_participant(this->participant);
 }
 
-bool CDDSPubSub::init() {
+bool CDDSPubSub::initCommon() {
   DomainParticipantQos participantQos;
   participantQos.name("4diac Publisher");
-  participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
-  if (participant == nullptr) return false;
+  this->participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
+  if (this->participant == nullptr) return false;
 
-  std::string typeName = this->registerType();
-  DEVLOG_DEBUG(("[DDS Publisher] Registered type '" + typeName + "'.\n").c_str());
+  this->topicType = this->registerType();
+  DEVLOG_DEBUG(("[DDS Publisher] Registered type '" + this->topicType + "'.\n").c_str());
 
-  topic = participant->create_topic(this->topicName, typeName, TOPIC_QOS_DEFAULT);
-  if (topic == nullptr) return false;
-
-  publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-  if (publisher == nullptr) return false;
-
-  writer = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT, nullptr);
-  if (writer == nullptr) return false;
+  this->topic = this->participant->create_topic(this->topicName, this->topicType, TOPIC_QOS_DEFAULT);
+  if (this->topic == nullptr) return false;
 
   return true;
 }
 
-CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType) {
-  if (topicType == "std_msgs/String") return new std_msgs::StringPubSub(topicName);
+bool CDDSPubSub::initPublisher() {
+  if (!this->initCommon()) return false;
+
+  this->publisher = this->participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+  if (this->publisher == nullptr) return false;
+
+  this->writer = this->publisher->create_datawriter(this->topic, DATAWRITER_QOS_DEFAULT, nullptr);
+  if (this->writer == nullptr) return false;
+
+  return true;
+}
+
+bool CDDSPubSub::initSubscriber() {
+  if (!this->initCommon()) return false;
+
+  this->subscriber = this->participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+  if (this->subscriber == nullptr) return false;
+
+  this->readerListener = new SubListener(this);
+  this->reader = this->subscriber->create_datareader(this->topic, DATAREADER_QOS_DEFAULT, this->readerListener);
+  if (this->reader == nullptr) return false;
+
+  return true;
+}
+
+CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType, CDDSHandler* handler) {
+  if (topicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(topicName, handler);
 
   // add other topic types here
 
   return nullptr;
+}
+
+void CDDSPubSub::SubListener::on_data_available(DataReader* reader) {
+  this->outer->handler->onDataAvailable(this->outer->topicName);
 }

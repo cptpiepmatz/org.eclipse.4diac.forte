@@ -10,10 +10,8 @@ namespace std_msgs {
 
 class StringPubSub : public CDDSPubSub {
   public:
-    static constexpr char* PUBLIC_TOPIC_TYPE = "std_msgs/String";
-
-    StringPubSub(std::string topicName) : 
-      CDDSPubSub(topicName),
+    StringPubSub(std::string topicName, CDDSHandler* handler) : 
+      CDDSPubSub(topicName, handler),
       type(new StringPubSubType()) {}
 
     std::string registerType() override;

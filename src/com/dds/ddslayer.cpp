@@ -1,4 +1,6 @@
 #include "ddslayer.h"
+#include "ddshandler.h"
+
 #include "basecommfb.h"
 #include "comtypes.h"
 
@@ -36,9 +38,10 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
   DEVLOG_DEBUG(("[DDS Layer] Topic type is '" + this->m_TopicType + "'.\n").c_str());
 
   switch (this->m_eCommServiceType) {
+    case EComServiceType::e_Publisher:
+      return this->openPublisherConnection();
     case EComServiceType::e_Subscriber:
-      DEVLOG_ERROR("[DDS Layer] Subscriber are not supported.\n");
-      return EComResponse::e_InitInvalidId;
+      return this->openSubscriberConnection();
     case EComServiceType::e_Server:
       DEVLOG_ERROR("[DDS Layer] Server are not supported.\n");
       return EComResponse::e_InitInvalidId;
@@ -46,40 +49,76 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
       DEVLOG_ERROR("[DDS Layer] Clients are not supported.\n");
       return EComResponse::e_InitInvalidId;
   }
+}
 
-  if (this->m_eCommServiceType == EComServiceType::e_Publisher) {
-    if (this->getCommFB()->getNumSD() != 1) {
-      DEVLOG_ERROR("[DDS Layer] Publishers need exactly 1 SD input.\n");
-      return EComResponse::e_InitInvalidId;
-    }
-
-    if (this->getCommFB()->getSDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
-      DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported.\n");
-      return EComResponse::e_InitInvalidId;
-    }
-
-    CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
-    
-    this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
-    if (this->publisher == nullptr) {
-      DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
-      return EComResponse::e_InitInvalidId;
-    }
-    if (!this->publisher->validateType(data->getStructTypeNameID())) {
-      DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
-      return EComResponse::e_InitInvalidId;
-    }
-    if (!this->publisher->init()) {
-      DEVLOG_ERROR("[DDS Layer] Could not initialize publisher.\n");
-      return EComResponse::e_InitInvalidId;
-    }
+EComResponse CDDSComLayer::openPublisherConnection() {
+  if (this->getCommFB()->getNumSD() != 1) {
+    DEVLOG_ERROR("[DDS Layer] Publishers need exactly 1 SD input.\n");
+    return EComResponse::e_InitInvalidId;
   }
+
+  if (this->getCommFB()->getSDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
+    DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+
+  CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
+  
+  this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
+  if (this->publisher == nullptr) {
+    DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+  if (!this->publisher->validateType(data->getStructTypeNameID())) {
+    DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+  if (!this->publisher->initPublisher()) {
+    DEVLOG_ERROR("[DDS Layer] Could not initialize publisher.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+
+  return EComResponse::e_InitOk;
+}
+
+EComResponse CDDSComLayer::openSubscriberConnection() {
+  if (this->getCommFB()->getNumRD() != 1) {
+    DEVLOG_ERROR("[DDS Layer] Subscribers need exactly 1 RD output.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+
+  if (this->getCommFB()->getRDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
+    DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+
+  CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getRDs();
+  
+  this->subscriber = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
+  if (this->subscriber == nullptr) {
+    DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+  if (!this->subscriber->validateType(data->getStructTypeNameID())) {
+    DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+  if (!this->subscriber->initSubscriber()) {
+    DEVLOG_ERROR("[DDS Layer] Could not initialize subscriber.\n");
+    return EComResponse::e_InitInvalidId;
+  }
+
+  getExtEvHandler<CDDSHandler>().registerTopic(this->m_TopicName, this);
 
   return EComResponse::e_InitOk;
 }
 
 void CDDSComLayer::closeConnection() {
   if (this->publisher != nullptr) delete this->publisher;
+  if (this->subscriber != nullptr) {
+    delete this->subscriber;
+    getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_TopicName);
+  }
 }
 
 EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
@@ -91,9 +130,16 @@ EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
 }
 
 EComResponse CDDSComLayer::recvData(const void *paData, unsigned int paSize) {
-  return EComResponse::e_Nothing;
+  
+  // receive data via the subscriber
+  
+  CIEC_STRUCT ciecStruct = this->subscriber->receive();
+  this->getCommFB()->getRDs()->setValue(ciecStruct);
+
+  return EComResponse::e_ProcessDataOk;
 }
 
 EComResponse CDDSComLayer::processInterrupt() {
-  return EComResponse::e_Nothing;
+  // we don't need to do anything here (only 1 layer)
+  return EComResponse::e_ProcessDataOk;
 }

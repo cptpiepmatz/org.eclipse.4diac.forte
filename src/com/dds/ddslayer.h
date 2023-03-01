@@ -14,8 +14,9 @@ namespace forte {
         CDDSComLayer(CComLayer* paUpperLayer, CBaseCommFB* paComFB);
         virtual ~CDDSComLayer();
 
-        // necessary methods for CComLayer implementation
         EComResponse openConnection(char *pa_acLayerParameter) override;
+        EComResponse openPublisherConnection();
+        EComResponse openSubscriberConnection();
         void closeConnection() override;
 
         EComResponse sendData(void *paData, unsigned int paSize) override;
@@ -32,6 +33,7 @@ namespace forte {
         std::string m_TopicType;
 
         CDDSPubSub* publisher;
+        CDDSPubSub* subscriber;
     };
 
   }
