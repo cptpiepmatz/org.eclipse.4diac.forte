@@ -10,8 +10,8 @@ namespace std_msgs {
 
 class StringPubSub : public CDDSPubSub {
   public:
-    StringPubSub(std::string topicName, DataReaderListener* readerListener) : 
-      CDDSPubSub(topicName, readerListener),
+    StringPubSub(std::string topicName) : 
+      CDDSPubSub(topicName),
       type(new StringPubSubType()) {}
 
     std::string registerType() override;

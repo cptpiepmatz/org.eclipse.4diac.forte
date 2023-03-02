@@ -3,7 +3,7 @@
 
 #include <extevhan.h>
 
-#include<fastdds/dds/subscriber/DataReaderListener.hpp>
+#include<fastdds/dds/subscriber/DataReader.hpp>
 
 #include "ddslayer.h"
 
@@ -11,7 +11,7 @@ using namespace forte::com_infra;
 
 namespace forte {
   namespace com_infra {
-    class CDDSHandler : public CExternalEventHandler, public DataReaderListener {
+    class CDDSHandler : public CExternalEventHandler {
       DECLARE_HANDLER(CDDSHandler)
 
       public: // methods overriden from the external event handler
@@ -20,8 +20,8 @@ namespace forte {
         void setPriority(int paPriority) override {}
         int getPriority() const override { return 0; }
 
-      public: // callback methods data reader listener
-        void on_data_available(DataReader* reader) override;
+      public: // callback methods for data reader listeners
+        void onDataAvailable(DataReader* reader);
 
       public: // custom methods for this handler
         void registerTopic(const std::string topicName, CDDSComLayer* comLayer);

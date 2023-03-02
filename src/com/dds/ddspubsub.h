@@ -20,23 +20,29 @@
 #include<fastdds/dds/subscriber/DataReader.hpp>
 #include<fastdds/dds/subscriber/DataReaderListener.hpp>
 
+namespace forte {
+  namespace com_infra {
+    class CDDSHandler;
+  }
+}
+
+using namespace forte::com_infra;
 using namespace eprosima::fastdds::dds;
 
 class CDDSPubSub {
   public:
-    CDDSPubSub(std::string topicName, DataReaderListener* readerListener) : 
+    CDDSPubSub(std::string topicName) : 
       topicName(topicName),
-      readerListener(readerListener),
       participant(nullptr), 
       topic(nullptr),
       publisher(nullptr),  
       writer(nullptr) {}
     virtual ~CDDSPubSub();
-    static CDDSPubSub* selectPubSub(std::string topicName, std::string topicType, DataReaderListener* readerListener);
+    static CDDSPubSub* selectPubSub(std::string topicName, std::string topicType);
 
     bool initCommon();
     bool initPublisher();
-    bool initSubscriber();
+    bool initSubscriber(CDDSHandler* handler);
 
     virtual std::string registerType() = 0;
     virtual bool validateType(const CStringDictionary::TStringId typeId) = 0; 
@@ -56,7 +62,15 @@ class CDDSPubSub {
 
     Subscriber* subscriber;
     DataReader* reader;
-    DataReaderListener* readerListener;
+    class SubListener : public DataReaderListener {
+      public:
+        SubListener() {}
+        ~SubListener() override {}
+        
+        CDDSHandler* handler;
+
+        inline void on_data_available(DataReader* reader);
+    } readerListener;
 };
 
 #endif /* _DDSPUBSUB_H_ */

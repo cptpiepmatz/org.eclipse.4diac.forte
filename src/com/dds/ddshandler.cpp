@@ -5,13 +5,11 @@ using namespace forte::com_infra;
 DEFINE_HANDLER(CDDSHandler)
 
 CDDSHandler::CDDSHandler(CDeviceExecution& pa_poDeviceExecution) :
-  CExternalEventHandler(pa_poDeviceExecution), 
-  DataReaderListener() {}
+  CExternalEventHandler(pa_poDeviceExecution) {}
 
 CDDSHandler::~CDDSHandler() {}
 
-void CDDSHandler::on_data_available(DataReader* reader) {
-  std::cout << "called" << std::endl;
+void CDDSHandler::onDataAvailable(DataReader* reader) {
   std::string topicName = reader->get_topicdescription()->get_name();
   CDDSComLayer* comLayer = this->getTopicLayer(topicName);
   if (comLayer == nullptr) return;

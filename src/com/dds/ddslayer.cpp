@@ -64,8 +64,7 @@ EComResponse CDDSComLayer::openPublisherConnection() {
 
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
   
-  CDDSHandler handler = this->getExtEvHandler<CDDSHandler>();
-  this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType, &handler);
+  this->publisher = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
   if (this->publisher == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
     return EComResponse::e_InitInvalidId;
@@ -95,8 +94,7 @@ EComResponse CDDSComLayer::openSubscriberConnection() {
 
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getRDs();
   
-  CDDSHandler handler = this->getExtEvHandler<CDDSHandler>();
-  this->subscriber = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType, &handler);
+  this->subscriber = CDDSPubSub::selectPubSub(this->m_TopicName, this->m_TopicType);
   if (this->subscriber == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
     return EComResponse::e_InitInvalidId;
@@ -105,7 +103,7 @@ EComResponse CDDSComLayer::openSubscriberConnection() {
     DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
     return EComResponse::e_InitInvalidId;
   }
-  if (!this->subscriber->initSubscriber()) {
+  if (!this->subscriber->initSubscriber(&this->getExtEvHandler<CDDSHandler>())) {
     DEVLOG_ERROR("[DDS Layer] Could not initialize subscriber.\n");
     return EComResponse::e_InitInvalidId;
   }
@@ -137,6 +135,7 @@ EComResponse CDDSComLayer::recvData(const void *paData, unsigned int paSize) {
   
   CIEC_STRUCT ciecStruct = this->subscriber->receive();
   this->getCommFB()->getRDs()->setValue(ciecStruct);
+  this->m_poFb->interruptCommFB(this);
 
   return EComResponse::e_ProcessDataOk;
 }

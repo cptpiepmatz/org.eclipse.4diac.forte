@@ -19,7 +19,6 @@ CDDSPubSub::~CDDSPubSub() {
   if (this->publisher != nullptr) this->participant->delete_publisher(this->publisher);
 
   if (this->reader != nullptr) this->subscriber->delete_datareader(this->reader);
-  if (this->readerListener != nullptr) delete this->readerListener;
   if (this->subscriber != nullptr) this->participant->delete_subscriber(this->subscriber);
 
   if (this->topic != nullptr) this->participant->delete_topic(this->topic);
@@ -54,21 +53,27 @@ bool CDDSPubSub::initPublisher() {
   return true;
 }
 
-bool CDDSPubSub::initSubscriber() {
+bool CDDSPubSub::initSubscriber(CDDSHandler* handler) {
   if (!this->initCommon()) return false;
+
+  this->readerListener.handler = handler;
 
   this->subscriber = this->participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
   if (this->subscriber == nullptr) return false;
 
-  this->reader = this->subscriber->create_datareader(this->topic, DATAREADER_QOS_DEFAULT, this->readerListener);
+  this->reader = this->subscriber->create_datareader(this->topic, DATAREADER_QOS_DEFAULT, &(this->readerListener));
   if (this->reader == nullptr) return false;
 
   DEVLOG_DEBUG("[DDS PubSub] Initialized subscriber.\n");
   return true;
 }
 
-CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType, DataReaderListener* readerListener) {
-  if (topicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(topicName, readerListener);
+inline void CDDSPubSub::SubListener::on_data_available(DataReader* reader) {
+  this->handler->onDataAvailable(reader);
+}
+
+CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType) {
+  if (topicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(topicName);
 
   // add other topic types here
 
