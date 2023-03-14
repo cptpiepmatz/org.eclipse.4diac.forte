@@ -47,8 +47,8 @@ class CROSLayer : public forte::com_infra::CComLayer{
     ros::NodeHandle m_Nh;
     ros::Publisher m_Pub;
     ros::Subscriber m_Sub;
-    std::string m_TopicName;
-    std::string m_TopicType;
+    std::string m_sTopicName;
+    std::string m_sTopicType;
     int m_NumRDs;
     int m_NumSDs;
 

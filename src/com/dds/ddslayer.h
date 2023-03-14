@@ -29,11 +29,11 @@ namespace forte {
       private:
         forte::com_infra::EComServiceType m_eCommServiceType;
 
-        std::string m_TopicName;
-        std::string m_TopicType;
+        std::string m_sTopicName;
+        std::string m_sTopicType;
 
-        CDDSPubSub* publisher;
-        CDDSPubSub* subscriber;
+        CDDSPubSub* m_pPublisher;
+        CDDSPubSub* m_pSubscriber;
     };
 
   }

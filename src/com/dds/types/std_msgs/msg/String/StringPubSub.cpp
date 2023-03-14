@@ -25,13 +25,13 @@ bool StringPubSub::publish(CIEC_STRUCT* data) {
   String string;
   string.data(value);
 
-  return this->writer->write(&string);
+  return this->m_pWriter->write(&string);
 }
 
 CIEC_STRUCT StringPubSub::receive() {
   String string;
   SampleInfo info;
-  this->reader->take_next_sample(&string, &info);
+  this->m_pReader->take_next_sample(&string, &info);
 
   CIEC_STRING ciecString = CIEC_STRING(string.data().c_str());
   CIEC_ROS2_std_msgs__msg__String ciecStruct = CIEC_ROS2_std_msgs__msg__String();

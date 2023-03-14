@@ -27,8 +27,8 @@ CROSLayer::CROSLayer(CComLayer* pa_poUpperLayer, CBaseCommFB* pa_poComFB) :
     CComLayer(pa_poUpperLayer, pa_poComFB){
 
   m_eInterruptResp = e_ProcessDataOk;
-  m_TopicName = "";
-  m_TopicType = "";
+  m_sTopicName = "";
+  m_sTopicType = "";
   m_NumSDs = -1;
   m_NumRDs = -1;
 }
@@ -48,14 +48,14 @@ EComResponse CROSLayer::openConnection(char *pa_acLayerParameter){
   // extract layerparams from ID input between the square brackets
   // example: ID = ros[/signal:std_msgs/Float64], layerparams = /signal:std_msgs/Float64
   int doublePoint = static_cast<int>(layerParams.find_last_of(":"));
-  m_TopicName = layerParams.substr(0, doublePoint);
+  m_sTopicName = layerParams.substr(0, doublePoint);
 
   if(e_Subscriber == m_eCommServiceType){
 
     m_NumRDs = getCommFB()->getNumRD();
 
     if(0 == m_NumRDs || 1 == m_NumRDs){
-      m_Sub = m_Nh.subscribe < topic_tools::ShapeShifter > (m_TopicName, 100, &CROSLayer::handleReceivedValue, const_cast<CROSLayer*>(this));
+      m_Sub = m_Nh.subscribe < topic_tools::ShapeShifter > (m_sTopicName, 100, &CROSLayer::handleReceivedValue, const_cast<CROSLayer*>(this));
     }
     else{
       DEVLOG_ERROR("[ROSLAYER] Subscribers with more than 1 RD output are not supported at the moment");
@@ -65,20 +65,20 @@ EComResponse CROSLayer::openConnection(char *pa_acLayerParameter){
     m_NumSDs = getCommFB()->getNumSD();
 
     if(0 == m_NumSDs){
-      m_Pub = m_Nh.advertise < std_msgs::Empty > (m_TopicName, 100);
+      m_Pub = m_Nh.advertise < std_msgs::Empty > (m_sTopicName, 100);
     }
     else if(1 == m_NumSDs){
 
-      m_TopicType = layerParams.substr(doublePoint + 1);
+      m_sTopicType = layerParams.substr(doublePoint + 1);
 
-      if("std_msgs/Float64" == m_TopicType) {
-        m_Pub = m_Nh.advertise < std_msgs::Float64 > (m_TopicName, 100);
-      } else if("std_msgs/Int32" == m_TopicType) {
-        m_Pub = m_Nh.advertise < std_msgs::Int32 > (m_TopicName, 100);
-      } else if("std_msgs/Bool" == m_TopicType) {
-        m_Pub = m_Nh.advertise < std_msgs::Bool > (m_TopicName, 100);
-      } else if("std_msgs/String" == m_TopicType) {
-        m_Pub = m_Nh.advertise < std_msgs::String > (m_TopicName, 100);
+      if("std_msgs/Float64" == m_sTopicType) {
+        m_Pub = m_Nh.advertise < std_msgs::Float64 > (m_sTopicName, 100);
+      } else if("std_msgs/Int32" == m_sTopicType) {
+        m_Pub = m_Nh.advertise < std_msgs::Int32 > (m_sTopicName, 100);
+      } else if("std_msgs/Bool" == m_sTopicType) {
+        m_Pub = m_Nh.advertise < std_msgs::Bool > (m_sTopicName, 100);
+      } else if("std_msgs/String" == m_sTopicType) {
+        m_Pub = m_Nh.advertise < std_msgs::String > (m_sTopicName, 100);
       } else {
         DEVLOG_ERROR("[ROSLAYER] Publisher could not be initialized: unknown topic type \n");
       }
@@ -111,29 +111,29 @@ void CROSLayer::handleReceivedValue(const boost::shared_ptr<const topic_tools::S
   // writing received values to RD output: getRDs() returns adress of Data from the RDs -> overwrite them
   CIEC_ANY *DataArray = getCommFB()->getRDs();
 
-  m_TopicType = pa_Message->getDataType();
+  m_sTopicType = pa_Message->getDataType();
 
   if(0 == m_NumRDs){
 
   }
   else if(1 == m_NumRDs){
 
-    if("std_msgs/Float64" == m_TopicType){
+    if("std_msgs/Float64" == m_sTopicType){
       boost::shared_ptr < std_msgs::Float64 > instantiated = pa_Message->instantiate<std_msgs::Float64>();
       double ROSValue = instantiated->data;
       *(CIEC_LREAL *) DataArray = ROSValue;
     }
-    else if("std_msgs/Int32" == m_TopicType){
+    else if("std_msgs/Int32" == m_sTopicType){
       boost::shared_ptr < std_msgs::Int32 > instantiated = pa_Message->instantiate<std_msgs::Int32>();
       int ROSValue = instantiated->data;
       *(CIEC_DINT *) DataArray = ROSValue;
     }
-    else if("std_msgs/Bool" == m_TopicType){
+    else if("std_msgs/Bool" == m_sTopicType){
       boost::shared_ptr < std_msgs::Bool > instantiated = pa_Message->instantiate<std_msgs::Bool>();
       bool ROSValue = instantiated->data;
       *(CIEC_BOOL *) DataArray = ROSValue;
     }
-    else if("std_msgs/String" == m_TopicType){
+    else if("std_msgs/String" == m_sTopicType){
       boost::shared_ptr < std_msgs::String > instantiated = pa_Message->instantiate<std_msgs::String>();
       std::string ROSValue = instantiated->data;
 
@@ -144,7 +144,7 @@ void CROSLayer::handleReceivedValue(const boost::shared_ptr<const topic_tools::S
       *(CIEC_STRING *) DataArray = tmpString;
     }
     else{
-      DEVLOG_ERROR("[ROSLAYER] Subscriber received a message with unknown type: %s \n", m_TopicType.c_str());
+      DEVLOG_ERROR("[ROSLAYER] Subscriber received a message with unknown type: %s \n", m_sTopicType.c_str());
     }
   }
   else{

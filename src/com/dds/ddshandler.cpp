@@ -9,8 +9,8 @@ CDDSHandler::CDDSHandler(CDeviceExecution& pa_poDeviceExecution) :
 
 CDDSHandler::~CDDSHandler() {}
 
-void CDDSHandler::onDataAvailable(DataReader* reader) {
-  std::string topicName = reader->get_topicdescription()->get_name();
+void CDDSHandler::onDataAvailable(DataReader* m_pReader) {
+  std::string topicName = m_pReader->get_topicdescription()->get_name();
   CDDSComLayer* comLayer = this->getTopicLayer(topicName);
   if (comLayer == nullptr) return;
 
@@ -19,14 +19,14 @@ void CDDSHandler::onDataAvailable(DataReader* reader) {
   }
 }
 
-void CDDSHandler::registerTopic(const std::string topicName, CDDSComLayer* comLayer) {
-  this->topicLayer[topicName] = comLayer;
+void CDDSHandler::registerTopic(const std::string m_sTopicName, CDDSComLayer* comLayer) {
+  this->mTopicLayer[m_sTopicName] = comLayer;
 }
 
-void CDDSHandler::unregisterTopic(const std::string topicName) {
-  this->topicLayer.erase(topicName);
+void CDDSHandler::unregisterTopic(const std::string m_sTopicName) {
+  this->mTopicLayer.erase(m_sTopicName);
 }
 
-CDDSComLayer* CDDSHandler::getTopicLayer(const std::string topicName) {
-  return this->topicLayer[topicName];
+CDDSComLayer* CDDSHandler::getTopicLayer(const std::string m_sTopicName) {
+  return this->mTopicLayer[m_sTopicName];
 }

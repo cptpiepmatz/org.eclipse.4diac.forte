@@ -31,14 +31,14 @@ using namespace eprosima::fastdds::dds;
 
 class CDDSPubSub {
   public:
-    CDDSPubSub(std::string topicName) : 
-      topicName(topicName),
-      participant(nullptr), 
-      topic(nullptr),
-      publisher(nullptr),  
-      writer(nullptr) {}
+    CDDSPubSub(std::string m_sTopicName) : 
+      m_sTopicName(m_sTopicName),
+      m_pParticipant(nullptr), 
+      m_pTopic(nullptr),
+      m_pPublisher(nullptr),  
+      m_pWriter(nullptr) {}
     virtual ~CDDSPubSub();
-    static CDDSPubSub* selectPubSub(std::string topicName, std::string topicType);
+    static CDDSPubSub* selectPubSub(std::string m_sTopicName, std::string m_sTopicType);
 
     bool initCommon();
     bool initPublisher();
@@ -51,26 +51,26 @@ class CDDSPubSub {
     virtual CIEC_STRUCT receive() = 0;
 
   protected:
-    std::string topicName;
-    std::string topicType;
+    std::string m_sTopicName;
+    std::string m_sTopicType;
 
-    DomainParticipant* participant;
-    Topic* topic;
+    DomainParticipant* m_pParticipant;
+    Topic* m_pTopic;
 
-    Publisher* publisher;
-    DataWriter* writer;
+    Publisher* m_pPublisher;
+    DataWriter* m_pWriter;
 
-    Subscriber* subscriber;
-    DataReader* reader;
-    class SubListener : public DataReaderListener {
+    Subscriber* m_pSubscriber;
+    DataReader* m_pReader;
+    class CSubListener : public DataReaderListener {
       public:
-        SubListener() {}
-        ~SubListener() override {}
+        CSubListener() {}
+        ~CSubListener() override {}
         
         CDDSHandler* handler;
 
-        inline void on_data_available(DataReader* reader);
-    } readerListener;
+        inline void on_data_available(DataReader* m_pReader);
+    } mReaderListener;
 };
 
 #endif /* _DDSPUBSUB_H_ */

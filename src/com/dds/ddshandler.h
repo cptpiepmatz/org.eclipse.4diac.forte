@@ -21,15 +21,15 @@ namespace forte {
         int getPriority() const override { return 0; }
 
       public: // callback methods for data reader listeners
-        void onDataAvailable(DataReader* reader);
+        void onDataAvailable(DataReader* pa_pReader);
 
       public: // custom methods for this handler
-        void registerTopic(const std::string topicName, CDDSComLayer* comLayer);
-        void unregisterTopic(const std::string topicName);
-        CDDSComLayer* getTopicLayer(const std::string topicName);
+        void registerTopic(const std::string pa_sTopicName, CDDSComLayer* pa_pComLayer);
+        void unregisterTopic(const std::string pa_sTopicName);
+        CDDSComLayer* getTopicLayer(const std::string pa_sTopicName);
 
       private:
-        std::map<std::string, CDDSComLayer*> topicLayer;
+        std::map<std::string, CDDSComLayer*> mTopicLayer;
     };
   }
 }

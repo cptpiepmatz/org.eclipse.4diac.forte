@@ -15,27 +15,27 @@ using namespace eprosima::fastdds::dds;
 using namespace forte::com_infra;
 
 CDDSPubSub::~CDDSPubSub() {
-  if (this->writer != nullptr) this->publisher->delete_datawriter(this->writer);
-  if (this->publisher != nullptr) this->participant->delete_publisher(this->publisher);
+  if (this->m_pWriter != nullptr) this->m_pPublisher->delete_datawriter(this->m_pWriter);
+  if (this->m_pPublisher != nullptr) this->m_pParticipant->delete_publisher(this->m_pPublisher);
 
-  if (this->reader != nullptr) this->subscriber->delete_datareader(this->reader);
-  if (this->subscriber != nullptr) this->participant->delete_subscriber(this->subscriber);
+  if (this->m_pReader != nullptr) this->m_pSubscriber->delete_datareader(this->m_pReader);
+  if (this->m_pSubscriber != nullptr) this->m_pParticipant->delete_subscriber(this->m_pSubscriber);
 
-  if (this->topic != nullptr) this->participant->delete_topic(this->topic);
-  DomainParticipantFactory::get_instance()->delete_participant(this->participant);
+  if (this->m_pTopic != nullptr) this->m_pParticipant->delete_topic(this->m_pTopic);
+  DomainParticipantFactory::get_instance()->delete_participant(this->m_pParticipant);
 }
 
 bool CDDSPubSub::initCommon() {
   DomainParticipantQos participantQos;
   participantQos.name("4diac Publisher");
-  this->participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
-  if (this->participant == nullptr) return false;
+  this->m_pParticipant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
+  if (this->m_pParticipant == nullptr) return false;
 
-  this->topicType = this->registerType();
-  DEVLOG_DEBUG(("[DDS PubSub] Registered type '" + this->topicType + "'.\n").c_str());
+  this->m_sTopicType = this->registerType();
+  DEVLOG_DEBUG(("[DDS PubSub] Registered type '" + this->m_sTopicType + "'.\n").c_str());
 
-  this->topic = this->participant->create_topic(this->topicName, this->topicType, TOPIC_QOS_DEFAULT);
-  if (this->topic == nullptr) return false;
+  this->m_pTopic = this->m_pParticipant->create_topic(this->m_sTopicName, this->m_sTopicType, TOPIC_QOS_DEFAULT);
+  if (this->m_pTopic == nullptr) return false;
 
   return true;
 }
@@ -43,37 +43,37 @@ bool CDDSPubSub::initCommon() {
 bool CDDSPubSub::initPublisher() {
   if (!this->initCommon()) return false;
 
-  this->publisher = this->participant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-  if (this->publisher == nullptr) return false;
+  this->m_pPublisher = this->m_pParticipant->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+  if (this->m_pPublisher == nullptr) return false;
 
-  this->writer = this->publisher->create_datawriter(this->topic, DATAWRITER_QOS_DEFAULT, nullptr);
-  if (this->writer == nullptr) return false;
+  this->m_pWriter = this->m_pPublisher->create_datawriter(this->m_pTopic, DATAWRITER_QOS_DEFAULT, nullptr);
+  if (this->m_pWriter == nullptr) return false;
 
-  DEVLOG_DEBUG("[DDS PubSub] Initialized publisher.\n");
+  DEVLOG_DEBUG("[DDS PubSub] Initialized m_pPublisher.\n");
   return true;
 }
 
 bool CDDSPubSub::initSubscriber(CDDSHandler* handler) {
   if (!this->initCommon()) return false;
 
-  this->readerListener.handler = handler;
+  this->mReaderListener.handler = handler;
 
-  this->subscriber = this->participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-  if (this->subscriber == nullptr) return false;
+  this->m_pSubscriber = this->m_pParticipant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+  if (this->m_pSubscriber == nullptr) return false;
 
-  this->reader = this->subscriber->create_datareader(this->topic, DATAREADER_QOS_DEFAULT, &(this->readerListener));
-  if (this->reader == nullptr) return false;
+  this->m_pReader = this->m_pSubscriber->create_datareader(this->m_pTopic, DATAREADER_QOS_DEFAULT, &(this->mReaderListener));
+  if (this->m_pReader == nullptr) return false;
 
-  DEVLOG_DEBUG("[DDS PubSub] Initialized subscriber.\n");
+  DEVLOG_DEBUG("[DDS PubSub] Initialized m_pSubscriber.\n");
   return true;
 }
 
-inline void CDDSPubSub::SubListener::on_data_available(DataReader* reader) {
-  this->handler->onDataAvailable(reader);
+inline void CDDSPubSub::CSubListener::on_data_available(DataReader* m_pReader) {
+  this->handler->onDataAvailable(m_pReader);
 }
 
-CDDSPubSub* CDDSPubSub::selectPubSub(std::string topicName, std::string topicType) {
-  if (topicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(topicName);
+CDDSPubSub* CDDSPubSub::selectPubSub(std::string m_sTopicName, std::string m_sTopicType) {
+  if (m_sTopicType == "std_msgs::msg::dds_::String_") return new std_msgs::StringPubSub(m_sTopicName);
 
   // add other topic types here
 
