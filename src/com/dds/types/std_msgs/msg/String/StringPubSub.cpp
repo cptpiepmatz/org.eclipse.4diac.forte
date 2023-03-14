@@ -8,7 +8,7 @@
 using namespace std_msgs;
 
 std::string StringPubSub::registerType() {
-  this->type.register_type(this->participant);
+  this->type.register_type(this->m_pParticipant);
   return this->type.get_type_name();
 }
 
