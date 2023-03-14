@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="MSG_PUBLISHER" Comment="ROS 2 MSG Publisher">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="Tim Hesse" Date="2023-03-14">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="INIT" Type="Event" Comment="Initialization Request">
+				<With Var="QI"/>
+				<With Var="TOPIC_NAME"/>
+				<With Var="TOPIC_TYPE"/>
+				<Attribute Name="YPOSITION" Type="STRING" Value="20"/>
+			</SubAppEvent>
+			<SubAppEvent Name="REQ" Type="Event" Comment="Normal Execution Request">
+				<With Var="QI"/>
+				<With Var="PUB_DATA"/>
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="INITO" Type="Event" Comment="Initialization Confirm">
+				<With Var="QO"/>
+				<With Var="STATUS"/>
+				<Attribute Name="YPOSITION" Type="STRING" Value="118"/>
+			</SubAppEvent>
+			<SubAppEvent Name="CNF" Type="Event" Comment="Execution Confirmation">
+				<With Var="QO"/>
+				<With Var="STATUS"/>
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="QI" Type="BOOL" Comment="Input event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="8"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_NAME" Type="WSTRING" Comment="ROS 2 Topic Name">
+				<Attribute Name="YPOSITION" Type="STRING" Value="78"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_TYPE" Type="WSTRING" Comment="ROS 2 Topic Type">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="PUB_DATA" Type="ANY" Comment="Data to publish">
+				<Attribute Name="YPOSITION" Type="STRING" Value="81"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="QO" Type="BOOL" Comment="Output event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+			<VarDeclaration Name="STATUS" Type="WSTRING" Comment="Service Status">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<FB Name="CONSTRUCT_DDS_ID" Type="CONSTRUCT_DDS_ID" Comment="" x="-410.0" y="490.0">
+			<Parameter Name="TOPIC_PREFIX" Value="&quot;rt&quot;"/>
+			<Parameter Name="TYPE_NAMESPACE" Value="&quot;msg&quot;"/>
+			<Parameter Name="TYPE_SUFFIX" Value="&quot;_&quot;"/>
+		</FB>
+		<FB Name="PUBLISH_1" Type="PUBLISH_1" Comment="" x="950.0" y="490.0">
+		</FB>
+		<EventConnections>
+			<Connection Source="INIT" Destination="CONSTRUCT_DDS_ID.REQ" Comment="" dx1="305.0"/>
+			<Connection Source="CONSTRUCT_DDS_ID.CNF" Destination="PUBLISH_1.INIT" Comment=""/>
+			<Connection Source="PUBLISH_1.CNF" Destination="CNF" Comment="" dx1="695.0"/>
+			<Connection Source="PUBLISH_1.INITO" Destination="INITO" Comment="" dx1="695.0"/>
+			<Connection Source="REQ" Destination="PUBLISH_1.REQ" Comment="" dx1="1695.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="CONSTRUCT_DDS_ID.ID" Destination="PUBLISH_1.ID" Comment="" dx1="55.0"/>
+			<Connection Source="TOPIC_NAME" Destination="CONSTRUCT_DDS_ID.ROS2_TOPIC" Comment=""/>
+			<Connection Source="TOPIC_TYPE" Destination="CONSTRUCT_DDS_ID.ROS2_TYPE" Comment=""/>
+			<Connection Source="PUB_DATA" Destination="PUBLISH_1.SD_1" Comment="" dx1="1595.0"/>
+			<Connection Source="QI" Destination="PUBLISH_1.QI" Comment="" dx1="1645.0"/>
+			<Connection Source="PUBLISH_1.QO" Destination="QO" Comment="" dx1="695.0"/>
+			<Connection Source="PUBLISH_1.STATUS" Destination="STATUS" Comment="" dx1="695.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>
