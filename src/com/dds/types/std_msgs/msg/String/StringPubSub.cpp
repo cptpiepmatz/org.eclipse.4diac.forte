@@ -1,4 +1,4 @@
-#include "modules/ros2/std_msgs/String/ROS2_std_msgs__String.h"
+#include "modules/ros2/std_msgs/msg/String/ROS2_std_msgs__msg__String.h"
 
 #include "StringPubSub.h"
 #ifdef FORTE_ENABLE_GENERATED_SOURCE_CPP
@@ -13,11 +13,11 @@ std::string StringPubSub::registerType() {
 }
 
 bool StringPubSub::validateType(const CStringDictionary::TStringId typeId) {
-  return typeId == g_nStringIdROS2_std_msgs__String;
+  return typeId == g_nStringIdROS2_std_msgs__msg__String;
 }
 
 bool StringPubSub::publish(CIEC_STRUCT* data) {
-  CIEC_ROS2_std_msgs__String *casted = (CIEC_ROS2_std_msgs__String *) data;
+  CIEC_ROS2_std_msgs__msg__String *casted = (CIEC_ROS2_std_msgs__msg__String *) data;
   std::string value = casted->data().getValue();
   
   DEVLOG_DEBUG(("[DDS Publisher/std_msgs/String] Sent message '" + value + "'.\n").c_str());
@@ -34,7 +34,7 @@ CIEC_STRUCT StringPubSub::receive() {
   this->reader->take_next_sample(&string, &info);
 
   CIEC_STRING ciecString = CIEC_STRING(string.data().c_str());
-  CIEC_ROS2_std_msgs__String ciecStruct = CIEC_ROS2_std_msgs__String();
+  CIEC_ROS2_std_msgs__msg__String ciecStruct = CIEC_ROS2_std_msgs__msg__String();
   ciecStruct.data() = ciecString;
 
   return ciecStruct;

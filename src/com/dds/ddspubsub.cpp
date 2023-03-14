@@ -1,6 +1,6 @@
 #include "ddspubsub.h"
 #include "ddshandler.h"
-#include "types/std_msgs/String/StringPubSub.h"
+#include "types/std_msgs/msg/String/StringPubSub.h"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp> 

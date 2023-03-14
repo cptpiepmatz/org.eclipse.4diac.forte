@@ -8,7 +8,7 @@ if(FORTE_COM_DDS)
   # include this directory
   forte_add_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   forte_add_handler(CDDSHandler ddshandler)
-  add_subdirectory("types/std_msgs/String")
+  add_subdirectory("types/std_msgs")
   forte_add_sourcefile_hcpp(ddspubsub ddshandler)
 
   # add link libraries
