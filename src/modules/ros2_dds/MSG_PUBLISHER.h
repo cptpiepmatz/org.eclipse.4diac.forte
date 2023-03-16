@@ -33,14 +33,12 @@ private:
   static const TEventID scm_nEventINITID = 0;
   static const TEventID scm_nEventREQID = 1;
   
-   static const TDataIOID scm_anEIWith[];
   static const TForteInt16 scm_anEIWithIndexes[];
   static const CStringDictionary::TStringId scm_anEventInputNames[];
   
   static const TEventID scm_nEventINITOID = 0;
   static const TEventID scm_nEventCNFID = 1;
   
-   static const TDataIOID scm_anEOWith[]; 
   static const TForteInt16 scm_anEOWithIndexes[];
   static const CStringDictionary::TStringId scm_anEventOutputNames[];
   

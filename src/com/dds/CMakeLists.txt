@@ -8,8 +8,13 @@ if(FORTE_COM_DDS)
   # include this directory
   forte_add_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   forte_add_handler(CDDSHandler ddshandler)
-  add_subdirectory("types/std_msgs")
   forte_add_sourcefile_hcpp(ddspubsub ddshandler)
+
+  # include types
+  add_subdirectory("types/action_msgs")
+  add_subdirectory("types/example_interfaces")
+  add_subdirectory("types/std_msgs")
+  add_subdirectory("types/turtlesim")
 
   # add link libraries
   forte_add_link_library(

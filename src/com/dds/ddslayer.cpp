@@ -123,6 +123,15 @@ void CDDSComLayer::closeConnection() {
 
 EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
   CIEC_STRUCT* data = (CIEC_STRUCT *) paData;
+  char sendDebug[255] = {};
+  data->toString(sendDebug, sizeof(sendDebug));
+  DEVLOG_DEBUG((
+    "[DDS Layer] Sending data on '" + 
+    this->m_sTopicName + 
+    "': " + 
+    sendDebug + 
+    "\n"
+  ).c_str());
   switch (this->m_pPublisher->publish(data)) {
     case false: return EComResponse::e_ProcessDataSendFailed;
     case true: return EComResponse::e_ProcessDataOk;
@@ -134,6 +143,15 @@ EComResponse CDDSComLayer::recvData(const void *paData, unsigned int paSize) {
   // receive data via the subscriber
   
   CIEC_STRUCT ciecStruct = this->m_pSubscriber->receive();
+  char recvDebug[255] = {};
+  ciecStruct.toString(recvDebug, sizeof(recvDebug));
+  DEVLOG_DEBUG((
+    "[DDS Layer] Received data on '" + 
+    this->m_sTopicName + 
+    "': " + 
+    recvDebug + 
+    "\n"
+  ).c_str());
   this->getCommFB()->getRDs()->setValue(ciecStruct);
   this->m_poFb->interruptCommFB(this);
 

@@ -1,1 +1,0 @@
-rosidl translate --to idl std_msgs String.msg

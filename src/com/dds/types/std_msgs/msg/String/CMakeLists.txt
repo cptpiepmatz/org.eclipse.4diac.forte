@@ -5,7 +5,7 @@ forte_add_sourcefile_cpp(
 
 forte_add_sourcefile_h(
   String.h
-  StringPubSubTypes.cxx
+  StringPubSubTypes.h
 )
 
 forte_add_sourcefile_hcpp(

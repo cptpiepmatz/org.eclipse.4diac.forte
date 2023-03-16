@@ -4,9 +4,9 @@
  *** This file was generated using the 4DIAC FORTE Export Filter V1.0.x NG!
  ***
  *** Name: CONSTRUCT_DDS_ID
- *** Description: Function Block to Construct DDS COM ID
+ *** Description: Construct DDS IDs
  *** Version:
-***     1.0: 2023-03-08/Tim Hesse -  - 
+***     1.0: 2023-03-15/Tim Hesse -  - 
  *************************************************************************/
 
 #include "CONSTRUCT_DDS_ID.h"
@@ -14,63 +14,109 @@
 #include "CONSTRUCT_DDS_ID_gen.cpp"
 #endif
 
-#include <boost/algorithm/string.hpp>
-
 
 DEFINE_FIRMWARE_FB(FORTE_CONSTRUCT_DDS_ID, g_nStringIdCONSTRUCT_DDS_ID)
 
-const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anDataInputNames[] = {g_nStringIdROS2_TOPIC, g_nStringIdROS2_TYPE, g_nStringIdTOPIC_PREFIX, g_nStringIdTYPE_NAMESPACE, g_nStringIdTYPE_SUFFIX};
+const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anDataInputNames[] = {g_nStringIdTOPIC, g_nStringIdTYPE};
 
-const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anDataInputTypeIds[] = {g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING};
+const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anDataInputTypeIds[] = {g_nStringIdWSTRING, g_nStringIdWSTRING};
 
 const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anDataOutputNames[] = {g_nStringIdID};
 
 const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anDataOutputTypeIds[] = {g_nStringIdWSTRING};
 
-const TDataIOID FORTE_CONSTRUCT_DDS_ID::scm_anEIWith[] = {0, 1, 2, 3, 4, 255};
-const TForteInt16 FORTE_CONSTRUCT_DDS_ID::scm_anEIWithIndexes[] = {0};
+const TForteInt16 FORTE_CONSTRUCT_DDS_ID::scm_anEIWithIndexes[] = {-1};
 const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anEventInputNames[] = {g_nStringIdREQ};
 
-const TDataIOID FORTE_CONSTRUCT_DDS_ID::scm_anEOWith[] = {0, 255};
-const TForteInt16 FORTE_CONSTRUCT_DDS_ID::scm_anEOWithIndexes[] = {0};
+const TForteInt16 FORTE_CONSTRUCT_DDS_ID::scm_anEOWithIndexes[] = {-1};
 const CStringDictionary::TStringId FORTE_CONSTRUCT_DDS_ID::scm_anEventOutputNames[] = {g_nStringIdCNF};
 
 
 const SFBInterfaceSpec FORTE_CONSTRUCT_DDS_ID::scm_stFBInterfaceSpec = {
-  1, scm_anEventInputNames, scm_anEIWith, scm_anEIWithIndexes,
-  1, scm_anEventOutputNames, scm_anEOWith, scm_anEOWithIndexes,
-  5, scm_anDataInputNames, scm_anDataInputTypeIds,
+  1, scm_anEventInputNames, nullptr, scm_anEIWithIndexes,
+  1, scm_anEventOutputNames, nullptr, scm_anEOWithIndexes,
+  2, scm_anDataInputNames, scm_anDataInputTypeIds,
   1, scm_anDataOutputNames, scm_anDataOutputTypeIds,
   0, nullptr
 };
 
-void FORTE_CONSTRUCT_DDS_ID::executeEvent(int pa_nEIID) {
-  switch(pa_nEIID) {
-    case scm_nEventREQID:
-      // constructing the topic name
-      std::string topic;
-      const std::string ros2Topic = this->st_ROS2_TOPIC().getValue();
-      const std::string topicPrefix = this->st_TOPIC_PREFIX().getValue();
-      topic = topicPrefix + "/" + ros2Topic;
+const SCFB_FBInstanceData FORTE_CONSTRUCT_DDS_ID::scm_astInternalFBs[] = {
+  {g_nStringIdTOPIC2WSTRING, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdTYPE2WSTRING, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdE_REND, g_nStringIdE_REND},
+  {g_nStringIdWSTRING2WSTRING_2, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdF_CONCAT, g_nStringIdF_CONCAT},
+  {g_nStringIdWSTRING2WSTRING_3, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdF_CONCAT_1, g_nStringIdF_CONCAT},
+  {g_nStringIdWSTRING2WSTRING_4, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdE_REND_1, g_nStringIdE_REND},
+  {g_nStringIdF_CONCAT_2, g_nStringIdF_CONCAT},
+  {g_nStringIdWSTRING2WSTRING_5, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdWSTRING2WSTRING_6, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdWSTRING2WSTRING_7, g_nStringIdWSTRING2WSTRING},
+  {g_nStringIdE_REND_2, g_nStringIdE_REND},
+  {g_nStringIdF_CONCAT_3, g_nStringIdF_CONCAT},
+  {g_nStringIdWSTRING2WSTRING_8, g_nStringIdWSTRING2WSTRING}
+};
 
-      // constructing the type name
-      std::string type;
-      const std::string ros2Type = this->st_ROS2_TYPE().getValue();
-      const std::string separator = "/";
-      std::vector<std::string> tokens;
-      boost::split(tokens, ros2Type, boost::is_any_of(separator));
-      const std::string appNamespace = tokens[0];
-      const std::string appType = tokens[1];
-      const std::string typeNamespace = this->st_TYPE_NAMESPACE().getValue();
-      const std::string typeSuffix = this->st_TYPE_SUFFIX().getValue();
-      type = appNamespace + "::" + typeNamespace + "::dds_::" + appType + typeSuffix;
-      
-      // assign constructed id to output 
-      std::string id = "dds[" + topic + ":" + type + "]";
-      this->st_ID() = CIEC_WSTRING(id.c_str());
-      this->sendOutputEvent(scm_nEventCNFID);
-      break;
-  }
-}
+const SCFB_FBParameter FORTE_CONSTRUCT_DDS_ID::scm_astParamters[] = {
+  {3, g_nStringIdIN, "\"dds[\""},
+  {5, g_nStringIdIN, "\":\""},
+  {12, g_nStringIdIN, "\"]\""},
+};
+
+const SCFB_FBConnectionData FORTE_CONSTRUCT_DDS_ID::scm_astEventConnections[] = {
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTOPIC2WSTRING, g_nStringIdCNF), 0, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND, g_nStringIdEI1), 2},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTYPE2WSTRING, g_nStringIdCNF), 1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND, g_nStringIdEI2), 2},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdREQ), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTOPIC2WSTRING, g_nStringIdREQ), 0},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_2, g_nStringIdCNF), 3, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT, g_nStringIdREQ), 4},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND, g_nStringIdEO), 2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_2, g_nStringIdREQ), 3},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_3, g_nStringIdCNF), 5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_1, g_nStringIdEI1), 8},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_4, g_nStringIdCNF), 7, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_1, g_nStringIdEI2), 8},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_1, g_nStringIdEO), 8, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_1, g_nStringIdREQ), 6},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT, g_nStringIdCNF), 4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_3, g_nStringIdREQ), 5},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_1, g_nStringIdCNF), 6, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_5, g_nStringIdREQ), 10},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_5, g_nStringIdCNF), 10, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_2, g_nStringIdREQ), 9},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_2, g_nStringIdCNF), 9, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_6, g_nStringIdREQ), 11},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_7, g_nStringIdCNF), 12, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_2, g_nStringIdEI1), 13},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_6, g_nStringIdCNF), 11, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_2, g_nStringIdEI2), 13},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_2, g_nStringIdEO), 13, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_3, g_nStringIdREQ), 14},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_3, g_nStringIdCNF), 14, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_8, g_nStringIdREQ), 15},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_8, g_nStringIdCNF), 15, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdCNF), -1},
+};
+
+const SCFB_FBFannedOutConnectionData FORTE_CONSTRUCT_DDS_ID::scm_astFannedOutEventConnections[] = {
+  {2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTYPE2WSTRING, g_nStringIdREQ), 1},
+  {8, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_4, g_nStringIdREQ), 7},
+  {11, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_7, g_nStringIdREQ), 12},
+};
+
+const SCFB_FBConnectionData FORTE_CONSTRUCT_DDS_ID::scm_astDataConnections[] = {
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdTOPIC), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTOPIC2WSTRING, g_nStringIdIN), 0},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdTYPE), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTYPE2WSTRING, g_nStringIdIN), 1},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_2, g_nStringIdOUT), 3, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT, g_nStringIdIN1), 4},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTOPIC2WSTRING, g_nStringIdOUT), 0, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT, g_nStringIdIN2), 4},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT, g_nStringIdOUT), 4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_4, g_nStringIdIN), 7},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_3, g_nStringIdOUT), 5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_1, g_nStringIdIN2), 6},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_4, g_nStringIdOUT), 7, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_1, g_nStringIdIN1), 6},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_1, g_nStringIdOUT), 6, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_5, g_nStringIdIN), 10},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_5, g_nStringIdOUT), 10, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_2, g_nStringIdIN1), 9},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdTYPE2WSTRING, g_nStringIdOUT), 1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_2, g_nStringIdIN2), 9},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_2, g_nStringIdOUT), 9, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_6, g_nStringIdIN), 11},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_7, g_nStringIdOUT), 12, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_3, g_nStringIdIN2), 14},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_6, g_nStringIdOUT), 11, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_3, g_nStringIdIN1), 14},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_CONCAT_3, g_nStringIdOUT), 14, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_8, g_nStringIdIN), 15},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdWSTRING2WSTRING_8, g_nStringIdOUT), 15, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdID), -1},
+};
+
+const SCFB_FBNData FORTE_CONSTRUCT_DDS_ID::scm_stFBNData = {
+  16, scm_astInternalFBs,
+  17, scm_astEventConnections,
+  3, scm_astFannedOutEventConnections,
+  15, scm_astDataConnections,
+  0, nullptr,
+  3, scm_astParamters
+};
+
 
 

@@ -1,0 +1,4 @@
+forte_add_sourcefile_hcpp(msg/GoalInfo/ROS2_action_msgs__msg__GoalInfo)
+
+forte_add_sourcefile_hcpp(srv/CancelGoal/ROS2_action_msgs__srv__CancelGoal__Request)
+forte_add_sourcefile_hcpp(srv/CancelGoal/ROS2_action_msgs__srv__CancelGoal__Response)
