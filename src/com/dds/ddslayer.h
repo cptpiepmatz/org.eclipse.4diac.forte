@@ -5,7 +5,7 @@
 
 #include "comlayer.h"
 
-typedef std::queue<GUID_t> IdentityQueue;
+struct RequestInfo;
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -48,7 +48,7 @@ namespace forte {
         CDDSPubSub* m_pPublisher;
         CDDSPubSub* m_pSubscriber;
 
-        IdentityQueue*  m_pIdentities;
+        std::queue<RequestInfo>*  m_pRequestInfos;
     };
 
   }

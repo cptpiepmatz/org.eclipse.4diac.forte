@@ -77,12 +77,12 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
       this->m_sSubTopicType = leftTopicType;
       this->m_sPubTopicName = rightTopicName;
       this->m_sPubTopicType = rightTopicType;
-      this->m_pIdentities = new std::queue<GUID_t>();
+      this->m_pRequestInfos = new std::queue<RequestInfo>();
       if (!this->checkIO("Server", 1, 1)) return EComResponse::e_InitInvalidId;
       if (!this->openSubscriberConnection()) return EComResponse::e_InitInvalidId;
-      this->m_pSubscriber->setIdentityQueue(this->m_pIdentities);
+      this->m_pSubscriber->setIdentityQueue(this->m_pRequestInfos);
       if (!this->openPublisherConnection()) return EComResponse::e_InitInvalidId;
-      this->m_pPublisher->setIdentityQueue(this->m_pIdentities);
+      this->m_pPublisher->setIdentityQueue(this->m_pRequestInfos);
       return EComResponse::e_InitOk;
 
     case EComServiceType::e_Client:
@@ -191,7 +191,7 @@ void CDDSComLayer::closeConnection() {
     delete this->m_pSubscriber;
     this->getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_sSubTopicName);
   }
-  if (this->m_pIdentities != nullptr) delete this->m_pIdentities;
+  if (this->m_pRequestInfos != nullptr) delete this->m_pRequestInfos;
 }
 
 EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {

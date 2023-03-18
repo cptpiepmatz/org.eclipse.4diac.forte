@@ -1,6 +1,8 @@
 #ifndef _DDSPUBSUB_H_
 #define _DDSPUBSUB_H_
 
+#include <queue>
+
 // forte
 #include "basecommfb.h"
 #include "stringdict.h"
@@ -31,7 +33,10 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::rtps;
 
-typedef std::queue<GUID_t> IdentityQueue;
+struct RequestInfo {
+  GUID_t guid;
+  int64_t sequence;
+};
 
 class CDDSPubSub {
   public:
@@ -47,7 +52,7 @@ class CDDSPubSub {
     bool initCommon();
     bool initPublisher();
     bool initSubscriber(CDDSHandler* handler);
-    void setIdentityQueue(IdentityQueue* paIdentities);
+    void setIdentityQueue(std::queue<RequestInfo>* paIdentities);
 
     virtual std::string registerType(DomainParticipant* paParticipant) = 0;
     virtual bool validateType(const CStringDictionary::TStringId typeId) = 0; 
@@ -81,7 +86,7 @@ class CDDSPubSub {
         inline void on_data_available(DataReader* m_pReader);
     } mReaderListener;
 
-    IdentityQueue* m_pIdentities;
+    std::queue<RequestInfo>* m_pRequestInfos;
 };
 
 #endif /* _DDSPUBSUB_H_ */

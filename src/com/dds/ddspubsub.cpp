@@ -74,8 +74,8 @@ bool CDDSPubSub::initSubscriber(CDDSHandler* handler) {
   return true;
 }
 
-void CDDSPubSub::setIdentityQueue(IdentityQueue* paIdentities) {
-  this->m_pIdentities = paIdentities;
+void CDDSPubSub::setIdentityQueue(std::queue<RequestInfo>* paRequestInfos) {
+  this->m_pRequestInfos = paRequestInfos;
 }
 
 inline void CDDSPubSub::CSubListener::on_data_available(DataReader* m_pReader) {
@@ -102,10 +102,15 @@ CDDSPubSub* CDDSPubSub::selectPubSub(std::string m_sTopicName, std::string m_sTo
 }
 
 bool CDDSPubSub::write(void* data) {
-  if (this->m_pIdentities != nullptr && !this->m_pIdentities->empty()) {
+  if (this->m_pRequestInfos != nullptr && !this->m_pRequestInfos->empty()) {
     auto writeParams = WriteParams();
-    writeParams.related_sample_identity().writer_guid(this->m_pIdentities->front());
-    this->m_pIdentities->pop();
+    RequestInfo reqInfo = this->m_pRequestInfos->front();
+    this->m_pRequestInfos->pop();
+    writeParams.related_sample_identity().writer_guid(reqInfo.guid);
+    writeParams.related_sample_identity().sequence_number().high =
+      (int32_t)((reqInfo.sequence & 0xFFFFFFFF00000000) >> 32);
+    writeParams.related_sample_identity().sequence_number().low =
+      (int32_t)(reqInfo.sequence & 0xFFFFFFFF);
     return this->m_pWriter->write(data, writeParams);
   }
   return this->m_pWriter->write(data);
@@ -114,8 +119,12 @@ bool CDDSPubSub::write(void* data) {
 ReturnCode_t CDDSPubSub::take(void* data) {
   SampleInfo info;
   auto ret = this->m_pReader->take_next_sample(data, &info);
-  if (this->m_pIdentities != nullptr) {
-    this->m_pIdentities->push(info.related_sample_identity.writer_guid());
+  if (this->m_pRequestInfos != nullptr) {
+    RequestInfo reqInfo;
+    reqInfo.guid = info.related_sample_identity.writer_guid();
+    reqInfo.sequence = ((int64_t)info.sample_identity.sequence_number().high) << 32 | 
+      info.sample_identity.sequence_number().low;
+    this->m_pRequestInfos->push(reqInfo);
   }
   return ret;
 };
