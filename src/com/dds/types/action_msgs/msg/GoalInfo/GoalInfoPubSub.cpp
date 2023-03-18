@@ -14,8 +14,8 @@ using namespace action_msgs;
 using namespace builtin_interfaces::msg;
 using namespace unique_identifier_msgs::msg;
 
-std::string GoalInfoPubSub::registerType() {
-  this->type.register_type(this->m_pParticipant);
+std::string GoalInfoPubSub::registerType(DomainParticipant* participant) {
+  this->type.register_type(participant);
   return this->type.get_type_name();
 }
 
@@ -42,13 +42,12 @@ bool GoalInfoPubSub::publish(CIEC_STRUCT* data) {
   goalInfo.goal_id(uuid);
   goalInfo.stamp(time);
 
-  return this->m_pWriter->write(&goalInfo);
+  return this->write(&goalInfo);
 }
 
 CIEC_STRUCT GoalInfoPubSub::receive() {
   GoalInfo goalInfo;
-  SampleInfo info;
-  this->m_pReader->take_next_sample(&goalInfo, &info);
+  this->take(&goalInfo);
   
   unique_identifier_msgs::msg::uint8__16 uuid = goalInfo.goal_id().uuid();
   int sec = goalInfo.stamp().sec();

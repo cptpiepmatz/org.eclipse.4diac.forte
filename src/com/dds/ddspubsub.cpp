@@ -17,6 +17,7 @@
 #include "basecommfb.h"
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastrtps::types;
 using namespace forte::com_infra;
 
 CDDSPubSub::~CDDSPubSub() {
@@ -36,7 +37,7 @@ bool CDDSPubSub::initCommon() {
   this->m_pParticipant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
   if (this->m_pParticipant == nullptr) return false;
 
-  this->m_sTopicType = this->registerType();
+  this->m_sTopicType = this->registerType(this->m_pParticipant);
   DEVLOG_DEBUG(("[DDS PubSub] Registered type '" + this->m_sTopicType + "'.\n").c_str());
 
   this->m_pTopic = this->m_pParticipant->create_topic(this->m_sTopicName, this->m_sTopicType, TOPIC_QOS_DEFAULT);
@@ -73,6 +74,10 @@ bool CDDSPubSub::initSubscriber(CDDSHandler* handler) {
   return true;
 }
 
+void CDDSPubSub::setIdentityQueue(IdentityQueue* paIdentities) {
+  this->m_pIdentities = paIdentities;
+}
+
 inline void CDDSPubSub::CSubListener::on_data_available(DataReader* m_pReader) {
   this->handler->onDataAvailable(m_pReader);
 }
@@ -95,3 +100,22 @@ CDDSPubSub* CDDSPubSub::selectPubSub(std::string m_sTopicName, std::string m_sTo
 
   return nullptr;
 }
+
+bool CDDSPubSub::write(void* data) {
+  if (this->m_pIdentities != nullptr && !this->m_pIdentities->empty()) {
+    auto writeParams = WriteParams();
+    writeParams.related_sample_identity().writer_guid(this->m_pIdentities->front());
+    this->m_pIdentities->pop();
+    return this->m_pWriter->write(data, writeParams);
+  }
+  return this->m_pWriter->write(data);
+};
+
+ReturnCode_t CDDSPubSub::take(void* data) {
+  SampleInfo info;
+  auto ret = this->m_pReader->take_next_sample(data, &info);
+  if (this->m_pIdentities != nullptr) {
+    this->m_pIdentities->push(info.related_sample_identity.writer_guid());
+  }
+  return ret;
+};

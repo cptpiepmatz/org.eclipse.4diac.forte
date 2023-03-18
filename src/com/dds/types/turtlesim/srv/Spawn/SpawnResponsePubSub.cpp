@@ -7,8 +7,8 @@
 
 using namespace turtlesim;
 
-std::string SpawnResponsePubSub::registerType() {
-  this->type.register_type(this->m_pParticipant);
+std::string SpawnResponsePubSub::registerType(DomainParticipant* participant) {
+  this->type.register_type(participant);
   return this->type.get_type_name();
 }
 
@@ -24,13 +24,12 @@ bool SpawnResponsePubSub::publish(CIEC_STRUCT* data) {
   Spawn_Response spawnResponse;
   spawnResponse.name(name);
 
-  return this->m_pWriter->write(&spawnResponse);
+  return this->write(&spawnResponse);
 }
 
 CIEC_STRUCT SpawnResponsePubSub::receive() {
   Spawn_Response spawnResponse;
-  SampleInfo info;
-  this->m_pReader->take_next_sample(&spawnResponse, &info);
+  this->take(&spawnResponse);
 
   CIEC_STRING ciecName = CIEC_STRING(spawnResponse.name().c_str());
   CIEC_ROS2_turtlesim__srv__Spawn__Response ciecStruct = CIEC_ROS2_turtlesim__srv__Spawn__Response();

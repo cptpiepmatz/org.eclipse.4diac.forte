@@ -7,8 +7,8 @@
 
 using namespace example_interfaces;
 
-std::string AddTwoIntsRequestPubSub::registerType() {
-  this->type.register_type(this->m_pParticipant);
+std::string AddTwoIntsRequestPubSub::registerType(DomainParticipant* participant) {
+  this->type.register_type(participant);
   return this->type.get_type_name();
 }
 
@@ -27,13 +27,12 @@ bool AddTwoIntsRequestPubSub::publish(CIEC_STRUCT* data) {
   addTwoIntsRequest.a(a);
   addTwoIntsRequest.b(b);
 
-  return this->m_pWriter->write(&addTwoIntsRequest);
+  return this->write(&addTwoIntsRequest);
 }
 
 CIEC_STRUCT AddTwoIntsRequestPubSub::receive() {
   AddTwoInts_Request addTwoIntsRequest;
-  SampleInfo info;
-  this->m_pReader->take_next_sample(&addTwoIntsRequest, &info);
+  this->take(&addTwoIntsRequest);
 
   CIEC_LINT ciecA = CIEC_LINT(addTwoIntsRequest.a());
   CIEC_LINT ciecB = CIEC_LINT(addTwoIntsRequest.b());

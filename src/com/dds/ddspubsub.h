@@ -28,6 +28,10 @@ namespace forte {
 
 using namespace forte::com_infra;
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::rtps;
+
+typedef std::queue<GUID_t> IdentityQueue;
 
 class CDDSPubSub {
   public:
@@ -43,14 +47,19 @@ class CDDSPubSub {
     bool initCommon();
     bool initPublisher();
     bool initSubscriber(CDDSHandler* handler);
+    void setIdentityQueue(IdentityQueue* paIdentities);
 
-    virtual std::string registerType() = 0;
+    virtual std::string registerType(DomainParticipant* paParticipant) = 0;
     virtual bool validateType(const CStringDictionary::TStringId typeId) = 0; 
     virtual bool publish(CIEC_STRUCT* data) = 0;
     // read in data and construct a CIEC_STRUCT
     virtual CIEC_STRUCT receive() = 0;
 
   protected:
+    bool write(void* data);
+    ReturnCode_t take(void* data);
+
+  private:
     std::string m_sTopicName;
     std::string m_sTopicType;
 
@@ -71,6 +80,8 @@ class CDDSPubSub {
 
         inline void on_data_available(DataReader* m_pReader);
     } mReaderListener;
+
+    IdentityQueue* m_pIdentities;
 };
 
 #endif /* _DDSPUBSUB_H_ */

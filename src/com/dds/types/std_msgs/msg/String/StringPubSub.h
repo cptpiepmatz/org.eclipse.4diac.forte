@@ -14,7 +14,7 @@ class StringPubSub : public CDDSPubSub {
       CDDSPubSub(m_sTopicName),
       type(new StringPubSubType()) {}
 
-    std::string registerType() override;
+    std::string registerType(DomainParticipant* paParticipant) override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
     CIEC_STRUCT receive() override;

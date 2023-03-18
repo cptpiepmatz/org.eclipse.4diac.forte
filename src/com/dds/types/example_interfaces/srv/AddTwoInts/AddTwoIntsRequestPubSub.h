@@ -14,7 +14,7 @@ class AddTwoIntsRequestPubSub : public CDDSPubSub {
       CDDSPubSub(m_sTopicName),
       type(new AddTwoInts_RequestPubSubType()) {}
 
-    std::string registerType() override;
+    std::string registerType(DomainParticipant* participant) override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
     CIEC_STRUCT receive() override;

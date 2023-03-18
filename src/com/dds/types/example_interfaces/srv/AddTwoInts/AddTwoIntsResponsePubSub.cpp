@@ -7,8 +7,8 @@
 
 using namespace example_interfaces;
 
-std::string AddTwoIntsResponsePubSub::registerType() {
-  this->type.register_type(this->m_pParticipant);
+std::string AddTwoIntsResponsePubSub::registerType(DomainParticipant* participant) {
+  this->type.register_type(participant);
   return this->type.get_type_name();
 }
 
@@ -24,13 +24,12 @@ bool AddTwoIntsResponsePubSub::publish(CIEC_STRUCT* data) {
   AddTwoInts_Response addTwoIntsResponse;
   addTwoIntsResponse.sum(sum);
 
-  return this->m_pWriter->write(&addTwoIntsResponse);
+  return this->write(&addTwoIntsResponse);
 }
 
 CIEC_STRUCT AddTwoIntsResponsePubSub::receive() {
   AddTwoInts_Response addTwoIntsResponse;
-  SampleInfo info;
-  this->m_pReader->take_next_sample(&addTwoIntsResponse, &info);
+  this->take(&addTwoIntsResponse);
 
   CIEC_LINT ciecSum = CIEC_LINT(addTwoIntsResponse.sum());
   CIEC_ROS2_example_interfaces__srv__AddTwoInts__Response ciecStruct =

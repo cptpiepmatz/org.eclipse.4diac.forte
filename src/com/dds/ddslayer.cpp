@@ -1,3 +1,5 @@
+#include <boost/regex.h>
+
 #include "ddslayer.h"
 #include "ddshandler.h"
 
@@ -5,120 +7,191 @@
 #include "comtypes.h"
 
 // according to https://design.ros2.org/articles/topic_and_service_names.html
-// square brackets and colons are not valid parts of valid dds topic, therefore 
-// the following style can be used 
+// square brackets, semicolons and colons are not valid parts of valid dds 
+// topic, therefore the following style can be used 
 //
-// ID data input for this: dds[topic_name:topic_type]
+// ID data input for this: 
+// dds[topic_name:topic_type] for publisher and subscriber
+// dds[topic_name:topic_type;topic_name:topic_type] for clients and servers
+// clients: left-pub right-sub => send request, await response
+// server: left-sub right-pub => await request, send response
 
 using namespace forte::com_infra;
-
-CDDSComLayer::CDDSComLayer(
-  CComLayer* paUpperLayer, 
-  CBaseCommFB* paComFB
-) : CComLayer(paUpperLayer, paComFB), m_pPublisher(nullptr) {
-  this->m_sTopicName = "";
-  this->m_sTopicType = "";
-}
-
-CDDSComLayer::~CDDSComLayer() {}
 
 EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
 
   this->m_eCommServiceType = getCommFB()->getComServiceType();
 
-  // extract topic name, before the colon and topic type, 
-  // after the colon from the parameters
   std::string layerParams = pa_acLayerParameter;
-  int colon = static_cast<int>(layerParams.find_first_of(":"));
+  std::string left, right;
+  std::string leftTopicName, leftTopicType, rightTopicName, rightTopicType;
 
-  this->m_sTopicName = layerParams.substr(0, colon);
-  DEVLOG_DEBUG(("[DDS Layer] Topic name is '" + this->m_sTopicName + "'.\n").c_str());
+  // split the string on ";"
+  size_t semicolon_pos = layerParams.find(";");
+  if (semicolon_pos != std::string::npos) {
+    left = layerParams.substr(0, semicolon_pos);
+    right = layerParams.substr(semicolon_pos + 1);
+  }
+  else left = layerParams;
 
-  this->m_sTopicType = layerParams.substr(colon + 1);
-  DEVLOG_DEBUG(("[DDS Layer] Topic type is '" + this->m_sTopicType + "'.\n").c_str());
+  // split each substring on ":"
+  size_t colon_pos = left.find(":");
+  if (colon_pos != std::string::npos) {
+    leftTopicName = left.substr(0, colon_pos);
+    leftTopicType = left.substr(colon_pos + 1);
+  }
+
+  colon_pos = right.find(":");
+  if (colon_pos != std::string::npos) {
+    rightTopicName = right.substr(0, colon_pos);
+    rightTopicType = right.substr(colon_pos + 1);
+  }
+
+  DEVLOG_DEBUG(("[DDS Layer] Left topic name is '" + leftTopicName + "'.\n").c_str());
+  DEVLOG_DEBUG(("[DDS Layer] Left topic type is '" + leftTopicType + "'.\n").c_str());
+  DEVLOG_DEBUG(("[DDS Layer] Right topic name is '" + rightTopicName + "'.\n").c_str());
+  DEVLOG_DEBUG(("[DDS Layer] Right topic type is '" + rightTopicType + "'.\n").c_str());
+
+  // Clients and servers are needed to implement ROS services correctly.
+  // They compose of a publisher and subscriber at the same time and share data 
+  // between them.
 
   switch (this->m_eCommServiceType) {
+
     case EComServiceType::e_Publisher:
-      return this->openPublisherConnection();
+      this->m_sPubTopicName = leftTopicName;
+      this->m_sPubTopicType = leftTopicType;
+      if (!this->checkIO("Publisher", 1, 0)) return EComResponse::e_InitInvalidId;
+      if (!this->openPublisherConnection()) return EComResponse::e_InitInvalidId;
+      return EComResponse::e_InitOk;
+
     case EComServiceType::e_Subscriber:
-      return this->openSubscriberConnection();
+      this->m_sSubTopicName = leftTopicName;
+      this->m_sSubTopicType = leftTopicType;
+      if (!this->checkIO("Subscriber", 0, 1)) return EComResponse::e_InitInvalidId;
+      if (!this->openSubscriberConnection()) return EComResponse::e_InitInvalidId;
+      return EComResponse::e_InitOk;
+
     case EComServiceType::e_Server:
-      DEVLOG_ERROR("[DDS Layer] Server are not supported.\n");
-      return EComResponse::e_InitInvalidId;
+      this->m_sSubTopicName = leftTopicName;
+      this->m_sSubTopicType = leftTopicType;
+      this->m_sPubTopicName = rightTopicName;
+      this->m_sPubTopicType = rightTopicType;
+      this->m_pIdentities = new std::queue<GUID_t>();
+      if (!this->checkIO("Server", 1, 1)) return EComResponse::e_InitInvalidId;
+      if (!this->openSubscriberConnection()) return EComResponse::e_InitInvalidId;
+      this->m_pSubscriber->setIdentityQueue(this->m_pIdentities);
+      if (!this->openPublisherConnection()) return EComResponse::e_InitInvalidId;
+      this->m_pPublisher->setIdentityQueue(this->m_pIdentities);
+      return EComResponse::e_InitOk;
+
     case EComServiceType::e_Client:
-      DEVLOG_ERROR("[DDS Layer] Clients are not supported.\n");
-      return EComResponse::e_InitInvalidId;
+      this->m_sPubTopicName = leftTopicName;
+      this->m_sPubTopicType = leftTopicType;
+      this->m_sSubTopicName = rightTopicName;
+      this->m_sSubTopicType = rightTopicType;
+      if (!this->checkIO("Client", 1, 1)) return EComResponse::e_InitInvalidId;
+      if (!this->openPublisherConnection()) return EComResponse::e_InitInvalidId;
+      if (!this->openSubscriberConnection()) return EComResponse::e_InitInvalidId;
+      return EComResponse::e_InitOk;
   }
 }
 
-EComResponse CDDSComLayer::openPublisherConnection() {
-  if (this->getCommFB()->getNumSD() != 1) {
-    DEVLOG_ERROR("[DDS Layer] Publishers need exactly 1 SD input.\n");
-    return EComResponse::e_InitInvalidId;
+bool CDDSComLayer::checkIO(          
+  std::string paDisplayName, 
+  unsigned int paSDCount, 
+  unsigned int paRDCount
+) {
+  auto fb = this->getCommFB();
+
+  // check for valid SD count
+  if (fb->getNumSD() != paSDCount) {
+    DEVLOG_ERROR((
+      "[DDS Layer] " + 
+      paDisplayName + 
+      "s need exactly " + 
+      std::to_string(paSDCount) + 
+      " SD input.\n"
+    ).c_str());
+    return false;
   }
 
-  if (this->getCommFB()->getSDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
-    DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported.\n");
-    return EComResponse::e_InitInvalidId;
+  // check for valid type on SD
+  if (paSDCount && fb->getSDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
+    DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported on SD input.");
+    return false;
   }
 
+  // check for valid RD count
+  if (this->getCommFB()->getNumRD() != paRDCount) {
+    DEVLOG_ERROR((
+      "[DDS Layer] " + 
+      paDisplayName + 
+      "s need exactly " + 
+      std::to_string(paRDCount) + 
+      " RD output.\n"
+    ).c_str());
+    return false;
+  }
+
+  // check for valid type on RD
+  if (paRDCount && fb->getRDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
+    DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported on RD output.");
+    return false;
+  }
+
+  return true;
+}
+
+bool CDDSComLayer::openPublisherConnection() {
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
   
-  this->m_pPublisher = CDDSPubSub::selectPubSub(this->m_sTopicName, this->m_sTopicType);
+  this->m_pPublisher = CDDSPubSub::selectPubSub(this->m_sPubTopicName, this->m_sPubTopicType);
   if (this->m_pPublisher == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
-    return EComResponse::e_InitInvalidId;
+    return false;
   }
   if (!this->m_pPublisher->validateType(data->getStructTypeNameID())) {
     DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
-    return EComResponse::e_InitInvalidId;
+    return false;
   }
   if (!this->m_pPublisher->initPublisher()) {
     DEVLOG_ERROR("[DDS Layer] Could not initialize publisher.\n");
-    return EComResponse::e_InitInvalidId;
+    return false;
   }
 
-  return EComResponse::e_InitOk;
+  return true;
 }
 
-EComResponse CDDSComLayer::openSubscriberConnection() {
-  if (this->getCommFB()->getNumRD() != 1) {
-    DEVLOG_ERROR("[DDS Layer] Subscribers need exactly 1 RD output.\n");
-    return EComResponse::e_InitInvalidId;
-  }
-
-  if (this->getCommFB()->getRDs()->getDataTypeID() != CIEC_ANY::EDataTypeID::e_STRUCT) {
-    DEVLOG_ERROR("[DDS Layer] Only STRUCT is supported.\n");
-    return EComResponse::e_InitInvalidId;
-  }
-
+bool CDDSComLayer::openSubscriberConnection() {
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getRDs();
   
-  this->m_pSubscriber = CDDSPubSub::selectPubSub(this->m_sTopicName, this->m_sTopicType);
+  this->m_pSubscriber = CDDSPubSub::selectPubSub(this->m_sSubTopicName, this->m_sSubTopicType);
   if (this->m_pSubscriber == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
-    return EComResponse::e_InitInvalidId;
+    return false;
   }
   if (!this->m_pSubscriber->validateType(data->getStructTypeNameID())) {
     DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
-    return EComResponse::e_InitInvalidId;
+    return false;
   }
   if (!this->m_pSubscriber->initSubscriber(&this->getExtEvHandler<CDDSHandler>())) {
     DEVLOG_ERROR("[DDS Layer] Could not initialize subscriber.\n");
-    return EComResponse::e_InitInvalidId;
+    return false;
   }
 
-  this->getExtEvHandler<CDDSHandler>().registerTopic(this->m_sTopicName, this);
+  this->getExtEvHandler<CDDSHandler>().registerTopic(this->m_sSubTopicName, this);
 
-  return EComResponse::e_InitOk;
+  return true;
 }
 
 void CDDSComLayer::closeConnection() {
   if (this->m_pPublisher != nullptr) delete this->m_pPublisher;
   if (this->m_pSubscriber != nullptr) {
     delete this->m_pSubscriber;
-    this->getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_sTopicName);
+    this->getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_sSubTopicName);
   }
+  if (this->m_pIdentities != nullptr) delete this->m_pIdentities;
 }
 
 EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
@@ -127,7 +200,7 @@ EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
   data->toString(sendDebug, sizeof(sendDebug));
   DEVLOG_DEBUG((
     "[DDS Layer] Sending data on '" + 
-    this->m_sTopicName + 
+    this->m_sPubTopicName + 
     "': " + 
     sendDebug + 
     "\n"
@@ -147,7 +220,7 @@ EComResponse CDDSComLayer::recvData(const void *paData, unsigned int paSize) {
   ciecStruct.toString(recvDebug, sizeof(recvDebug));
   DEVLOG_DEBUG((
     "[DDS Layer] Received data on '" + 
-    this->m_sTopicName + 
+    this->m_sSubTopicName + 
     "': " + 
     recvDebug + 
     "\n"

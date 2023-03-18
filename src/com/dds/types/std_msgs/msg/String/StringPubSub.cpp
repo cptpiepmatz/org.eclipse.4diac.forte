@@ -7,8 +7,8 @@
 
 using namespace std_msgs;
 
-std::string StringPubSub::registerType() {
-  this->type.register_type(this->m_pParticipant);
+std::string StringPubSub::registerType(DomainParticipant* paParticipant) {
+  this->type.register_type(paParticipant);
   return this->type.get_type_name();
 }
 
@@ -25,13 +25,12 @@ bool StringPubSub::publish(CIEC_STRUCT* data) {
   String string;
   string.data(value);
 
-  return this->m_pWriter->write(&string);
+  return this->write(&string);
 }
 
 CIEC_STRUCT StringPubSub::receive() {
   String string;
-  SampleInfo info;
-  this->m_pReader->take_next_sample(&string, &info);
+  this->take(&string);
 
   CIEC_STRING ciecString = CIEC_STRING(string.data().c_str());
   CIEC_ROS2_std_msgs__msg__String ciecStruct = CIEC_ROS2_std_msgs__msg__String();
