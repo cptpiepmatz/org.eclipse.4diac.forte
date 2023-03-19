@@ -24,12 +24,12 @@ namespace forte {
         void onDataAvailable(DataReader* pa_pReader);
 
       public: // custom methods for this handler
-        void registerTopic(const std::string pa_sTopicName, CDDSComLayer* pa_pComLayer);
-        void unregisterTopic(const std::string pa_sTopicName);
-        CDDSComLayer* getTopicLayer(const std::string pa_sTopicName);
+        void registerLayer(const GUID_t paReaderGUID, CDDSComLayer* pa_pComLayer);
+        void unregisterLayer(const GUID_t paReaderGUID);
+        CDDSComLayer* getReaderLayer(const GUID_t paReaderGUID);
 
       private:
-        std::map<std::string, CDDSComLayer*> mTopicLayer;
+        std::map<GUID_t, CDDSComLayer*> mReaderLayer;
     };
   }
 }

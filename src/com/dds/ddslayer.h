@@ -5,8 +5,6 @@
 
 #include "comlayer.h"
 
-struct RequestInfo;
-
 using namespace eprosima::fastrtps::rtps;
 
 namespace forte {
@@ -48,7 +46,8 @@ namespace forte {
         CDDSPubSub* m_pPublisher;
         CDDSPubSub* m_pSubscriber;
 
-        std::queue<RequestInfo>*  m_pRequestInfos;
+        std::queue<SRequestInfo>*  m_pRequestInfos;
+        EPubSubRole m_enPubSubRole;
     };
 
   }

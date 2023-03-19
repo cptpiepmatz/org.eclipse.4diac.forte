@@ -33,9 +33,11 @@ bool SpawnRequestPubSub::publish(CIEC_STRUCT* data) {
   return this->write(&spawnRequest);
 }
 
-CIEC_STRUCT SpawnRequestPubSub::receive() {
+std::optional<CIEC_STRUCT> SpawnRequestPubSub::receive() {
   Spawn_Request spawnRequest;
-  this->take(&spawnRequest);
+  bool taken;
+  this->take(&taken, &spawnRequest);
+  if (!taken) return std::nullopt;
 
   CIEC_REAL ciecX = CIEC_REAL(spawnRequest.x());
   CIEC_REAL ciecY = CIEC_REAL(spawnRequest.y());

@@ -30,9 +30,11 @@ bool AddTwoIntsRequestPubSub::publish(CIEC_STRUCT* data) {
   return this->write(&addTwoIntsRequest);
 }
 
-CIEC_STRUCT AddTwoIntsRequestPubSub::receive() {
+std::optional<CIEC_STRUCT> AddTwoIntsRequestPubSub::receive() {
   AddTwoInts_Request addTwoIntsRequest;
-  this->take(&addTwoIntsRequest);
+  bool taken;
+  this->take(&taken, &addTwoIntsRequest);
+  if (!taken) return std::nullopt;
 
   CIEC_LINT ciecA = CIEC_LINT(addTwoIntsRequest.a());
   CIEC_LINT ciecB = CIEC_LINT(addTwoIntsRequest.b());

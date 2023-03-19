@@ -9,9 +9,9 @@ CDDSHandler::CDDSHandler(CDeviceExecution& pa_poDeviceExecution) :
 
 CDDSHandler::~CDDSHandler() {}
 
-void CDDSHandler::onDataAvailable(DataReader* m_pReader) {
-  std::string topicName = m_pReader->get_topicdescription()->get_name();
-  CDDSComLayer* comLayer = this->getTopicLayer(topicName);
+void CDDSHandler::onDataAvailable(DataReader* pa_pReader) {
+  GUID_t readerGuid = pa_pReader->guid();
+  CDDSComLayer* comLayer = this->getReaderLayer(readerGuid);
   if (comLayer == nullptr) return;
 
   if (comLayer->recvData(nullptr, 0) != EComResponse::e_Nothing) {
@@ -19,14 +19,14 @@ void CDDSHandler::onDataAvailable(DataReader* m_pReader) {
   }
 }
 
-void CDDSHandler::registerTopic(const std::string m_sTopicName, CDDSComLayer* comLayer) {
-  this->mTopicLayer[m_sTopicName] = comLayer;
+void CDDSHandler::registerLayer(const GUID_t paReaderGUID, CDDSComLayer* pa_pComLayer) {
+  this->mReaderLayer[paReaderGUID] = pa_pComLayer;
 }
 
-void CDDSHandler::unregisterTopic(const std::string m_sTopicName) {
-  this->mTopicLayer.erase(m_sTopicName);
+void CDDSHandler::unregisterLayer(const GUID_t paReaderGUID) {
+  this->mReaderLayer.erase(paReaderGUID);
 }
 
-CDDSComLayer* CDDSHandler::getTopicLayer(const std::string m_sTopicName) {
-  return this->mTopicLayer[m_sTopicName];
+CDDSComLayer* CDDSHandler::getReaderLayer(const GUID_t paReaderGUID) {
+  return this->mReaderLayer[paReaderGUID];
 }

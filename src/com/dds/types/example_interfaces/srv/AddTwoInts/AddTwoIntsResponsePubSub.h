@@ -10,14 +10,14 @@ namespace example_interfaces {
 
 class AddTwoIntsResponsePubSub : public CDDSPubSub {
   public:
-    AddTwoIntsResponsePubSub(std::string m_sTopicName) : 
-      CDDSPubSub(m_sTopicName),
+    AddTwoIntsResponsePubSub(std::string topicName, EPubSubRole role) : 
+      CDDSPubSub(topicName, role),
       type(new AddTwoInts_ResponsePubSubType()) {}
 
     std::string registerType(DomainParticipant* participant) override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
-    CIEC_STRUCT receive() override;
+    std::optional<CIEC_STRUCT> receive() override;
 
   private:
     TypeSupport type;

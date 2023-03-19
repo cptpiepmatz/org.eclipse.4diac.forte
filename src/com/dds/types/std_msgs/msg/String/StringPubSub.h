@@ -10,14 +10,14 @@ namespace std_msgs {
 
 class StringPubSub : public CDDSPubSub {
   public:
-    StringPubSub(std::string m_sTopicName) : 
-      CDDSPubSub(m_sTopicName),
+    StringPubSub(std::string topicName, EPubSubRole role) : 
+      CDDSPubSub(topicName, role),
       type(new StringPubSubType()) {}
 
     std::string registerType(DomainParticipant* paParticipant) override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
-    CIEC_STRUCT receive() override;
+    std::optional<CIEC_STRUCT> receive() override;
 
   private:
     TypeSupport type;

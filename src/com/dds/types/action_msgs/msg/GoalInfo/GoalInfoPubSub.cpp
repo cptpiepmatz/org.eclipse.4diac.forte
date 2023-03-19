@@ -45,9 +45,11 @@ bool GoalInfoPubSub::publish(CIEC_STRUCT* data) {
   return this->write(&goalInfo);
 }
 
-CIEC_STRUCT GoalInfoPubSub::receive() {
+std::optional<CIEC_STRUCT> GoalInfoPubSub::receive() {
   GoalInfo goalInfo;
-  this->take(&goalInfo);
+  bool taken;
+  this->take(&taken, &goalInfo);
+  if (!taken) return std::nullopt;
   
   unique_identifier_msgs::msg::uint8__16 uuid = goalInfo.goal_id().uuid();
   int sec = goalInfo.stamp().sec();

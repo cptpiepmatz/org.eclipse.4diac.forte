@@ -62,7 +62,7 @@ bool CDDSPubSub::initPublisher() {
 bool CDDSPubSub::initSubscriber(CDDSHandler* handler) {
   if (!this->initCommon()) return false;
 
-  this->mReaderListener.handler = handler;
+  this->mReaderListener.m_pHandler = handler;
 
   this->m_pSubscriber = this->m_pParticipant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
   if (this->m_pSubscriber == nullptr) return false;
@@ -74,57 +74,114 @@ bool CDDSPubSub::initSubscriber(CDDSHandler* handler) {
   return true;
 }
 
-void CDDSPubSub::setIdentityQueue(std::queue<RequestInfo>* paRequestInfos) {
+void CDDSPubSub::setIdentityQueue(std::queue<SRequestInfo>* paRequestInfos) {
   this->m_pRequestInfos = paRequestInfos;
 }
 
-inline void CDDSPubSub::CSubListener::on_data_available(DataReader* m_pReader) {
-  this->handler->onDataAvailable(m_pReader);
+std::optional<GUID_t> CDDSPubSub::getReaderGUID() {
+  if (this->m_pSubscriber != nullptr) return this->m_pReader->guid();
+  return std::nullopt;
 }
 
-CDDSPubSub* CDDSPubSub::selectPubSub(std::string m_sTopicName, std::string m_sTopicType) {
-  if (m_sTopicType == "std_msgs::msg::dds_::String_") 
-    return new std_msgs::StringPubSub(m_sTopicName);
+inline void CDDSPubSub::CSubListener::on_data_available(DataReader* m_pReader) {
+  this->m_pHandler->onDataAvailable(m_pReader);
+}
 
-  if (m_sTopicType == "turtlesim::srv::dds_::Spawn_Request") 
-    return new turtlesim::SpawnRequestPubSub(m_sTopicName);
-  if (m_sTopicType == "turtlesim::srv::dds_::Spawn_Response") 
-    return new turtlesim::SpawnResponsePubSub(m_sTopicName);
+CDDSPubSub* CDDSPubSub::selectPubSub(
+  std::string pa_sTopicName, 
+  std::string pa_sTopicType,
+  EPubSubRole pa_enPubSubRole
+) {
+  if (pa_sTopicType == "std_msgs::msg::dds_::String_") 
+    return new std_msgs::StringPubSub(pa_sTopicName, pa_enPubSubRole);
 
-  if (m_sTopicType == "example_interfaces::srv::dds_::AddTwoInts_Request_")
-    return new example_interfaces::AddTwoIntsRequestPubSub(m_sTopicName);
-  if (m_sTopicType == "example_interfaces::srv::dds_::AddTwoInts_Response_")
-    return new example_interfaces::AddTwoIntsResponsePubSub(m_sTopicName);
+  if (pa_sTopicType == "turtlesim::srv::dds_::Spawn_Request") 
+    return new turtlesim::SpawnRequestPubSub(pa_sTopicName, pa_enPubSubRole);
+  if (pa_sTopicType == "turtlesim::srv::dds_::Spawn_Response") 
+    return new turtlesim::SpawnResponsePubSub(pa_sTopicName, pa_enPubSubRole);
+
+  if (pa_sTopicType == "example_interfaces::srv::dds_::AddTwoInts_Request_")
+    return new example_interfaces::AddTwoIntsRequestPubSub(pa_sTopicName, pa_enPubSubRole);
+  if (pa_sTopicType == "example_interfaces::srv::dds_::AddTwoInts_Response_")
+    return new example_interfaces::AddTwoIntsResponsePubSub(pa_sTopicName, pa_enPubSubRole);
     
   // add other topic types here
 
   return nullptr;
 }
 
-bool CDDSPubSub::write(void* data) {
-  if (this->m_pRequestInfos != nullptr && !this->m_pRequestInfos->empty()) {
-    auto writeParams = WriteParams();
-    RequestInfo reqInfo = this->m_pRequestInfos->front();
-    this->m_pRequestInfos->pop();
-    writeParams.related_sample_identity().writer_guid(reqInfo.guid);
-    writeParams.related_sample_identity().sequence_number().high =
-      (int32_t)((reqInfo.sequence & 0xFFFFFFFF00000000) >> 32);
-    writeParams.related_sample_identity().sequence_number().low =
-      (int32_t)(reqInfo.sequence & 0xFFFFFFFF);
-    return this->m_pWriter->write(data, writeParams);
+bool CDDSPubSub::write(void* pa_pData) {
+
+  auto writeParams = WriteParams();
+  SRequestInfo reqInfo;
+
+  switch (this->m_enRole) {
+
+    // simply publish
+    case EPubSubRole::NONE:
+      return this->m_pWriter->write(pa_pData);
+    
+    // take data from the request queueue and update the response with it
+    case EPubSubRole::SERVER:
+      if (this->m_pRequestInfos == nullptr || this->m_pRequestInfos->empty()) return false;
+      reqInfo = this->m_pRequestInfos->front();
+      this->m_pRequestInfos->pop();
+      writeParams.related_sample_identity().writer_guid(reqInfo.guid);
+      writeParams.related_sample_identity().sequence_number() = reqInfo.sequence;
+      return this->m_pWriter->write(pa_pData, writeParams);
+
+    // when sending a request, make sure it uses the correct writer guid and 
+    // sequence number, also update the queue
+    case EPubSubRole::CLIENT:
+      if (this->m_pRequestInfos == nullptr) return false;
+      SequenceNumber_t sequenceNumber = ++this->mSequenceNumber;
+      writeParams.related_sample_identity().writer_guid(this->m_pWriter->guid());
+      writeParams.related_sample_identity().sequence_number() = sequenceNumber;
+      reqInfo.guid = this->m_pWriter->guid();
+      reqInfo.sequence = sequenceNumber;
+      this->m_pRequestInfos->push(reqInfo);
+      return this->m_pWriter->write(pa_pData, writeParams);
+
   }
-  return this->m_pWriter->write(data);
 };
 
-ReturnCode_t CDDSPubSub::take(void* data) {
+ReturnCode_t CDDSPubSub::take(bool* pa_pTaken, void* pa_pData) {
+
+  *pa_pTaken = false;
   SampleInfo info;
-  auto ret = this->m_pReader->take_next_sample(data, &info);
-  if (this->m_pRequestInfos != nullptr) {
-    RequestInfo reqInfo;
-    reqInfo.guid = info.related_sample_identity.writer_guid();
-    reqInfo.sequence = ((int64_t)info.sample_identity.sequence_number().high) << 32 | 
-      info.sample_identity.sequence_number().low;
-    this->m_pRequestInfos->push(reqInfo);
+  SRequestInfo reqInfo;
+  auto ret = this->m_pReader->take_next_sample(pa_pData, &info);
+  
+  switch (this->m_enRole) {
+    
+    // do nothing special
+    case EPubSubRole::NONE:
+      *pa_pTaken = true;
+      break;
+
+    // store the request info in the queue
+    case EPubSubRole::SERVER:
+      if (this->m_pRequestInfos == nullptr) break;
+      *pa_pTaken = true;
+      reqInfo.guid = info.related_sample_identity.writer_guid();
+      reqInfo.sequence = info.sample_identity.sequence_number();
+      this->m_pRequestInfos->push(reqInfo);
+      break;
+
+    // compare if the sample info matches the prepared request
+    case EPubSubRole::CLIENT:
+      if (this->m_pRequestInfos == nullptr || this->m_pRequestInfos->empty()) break;
+      reqInfo = this->m_pRequestInfos->front();
+      
+      // TODO: handle sequence number in some way
+
+      if (info.related_sample_identity.writer_guid() == reqInfo.guid) {
+        *pa_pTaken = true;
+        this->m_pRequestInfos->pop();
+      }
+      break;
+
   }
+
   return ret;
 };

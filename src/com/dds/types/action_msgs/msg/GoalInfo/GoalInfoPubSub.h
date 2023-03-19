@@ -10,14 +10,14 @@ namespace action_msgs {
 
 class GoalInfoPubSub : public CDDSPubSub {
   public:
-    GoalInfoPubSub(std::string m_sTopicName) : 
-      CDDSPubSub(m_sTopicName),
+    GoalInfoPubSub(std::string topicName, EPubSubRole role) : 
+      CDDSPubSub(topicName, role),
       type(new GoalInfoPubSubType()) {}
 
     std::string registerType(DomainParticipant* participant) override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
-    CIEC_STRUCT receive() override;
+    std::optional<CIEC_STRUCT> receive() override;
 
   private:
     TypeSupport type;

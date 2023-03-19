@@ -10,14 +10,14 @@ namespace turtlesim {
 
 class SpawnResponsePubSub : public CDDSPubSub {
   public:
-    SpawnResponsePubSub(std::string m_sTopicName) : 
-      CDDSPubSub(m_sTopicName),
+    SpawnResponsePubSub(std::string topicName, EPubSubRole role) : 
+      CDDSPubSub(topicName, role),
       type(new Spawn_ResponsePubSubType()) {}
 
     std::string registerType(DomainParticipant* participant) override;
     bool validateType(const CStringDictionary::TStringId typeId) override;
     bool publish(CIEC_STRUCT* data) override;
-    CIEC_STRUCT receive() override;
+    std::optional<CIEC_STRUCT> receive() override;
 
   private:
     TypeSupport type;

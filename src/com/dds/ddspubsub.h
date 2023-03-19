@@ -2,6 +2,7 @@
 #define _DDSPUBSUB_H_
 
 #include <queue>
+#include <optional>
 
 // forte
 #include "basecommfb.h"
@@ -33,36 +34,51 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::rtps;
 
-struct RequestInfo {
+// enum representing the role of this pub sub
+enum EPubSubRole {
+  NONE,
+  SERVER,
+  CLIENT
+};
+
+// struct for request meta data, needed for servers and clients
+struct SRequestInfo {
   GUID_t guid;
-  int64_t sequence;
+  SequenceNumber_t sequence;
 };
 
 class CDDSPubSub {
   public:
-    CDDSPubSub(std::string m_sTopicName) : 
-      m_sTopicName(m_sTopicName),
+    CDDSPubSub(std::string pa_sTopicName, EPubSubRole pa_enRole) : 
+      m_sTopicName(pa_sTopicName),
       m_pParticipant(nullptr), 
       m_pTopic(nullptr),
       m_pPublisher(nullptr),  
-      m_pWriter(nullptr) {}
+      m_pWriter(nullptr),
+      m_enRole(pa_enRole),
+      mSequenceNumber(0) {}
     virtual ~CDDSPubSub();
-    static CDDSPubSub* selectPubSub(std::string m_sTopicName, std::string m_sTopicType);
+    static CDDSPubSub* selectPubSub(
+      std::string pa_sTopicName, 
+      std::string pa_sTopicType,
+      EPubSubRole pa_enPubSubRole
+    );
 
     bool initCommon();
     bool initPublisher();
-    bool initSubscriber(CDDSHandler* handler);
-    void setIdentityQueue(std::queue<RequestInfo>* paIdentities);
+    bool initSubscriber(CDDSHandler* pa_pHandler);
+    void setIdentityQueue(std::queue<SRequestInfo>* pa_pRequestInfo);
+    std::optional<GUID_t> getReaderGUID();
 
-    virtual std::string registerType(DomainParticipant* paParticipant) = 0;
-    virtual bool validateType(const CStringDictionary::TStringId typeId) = 0; 
-    virtual bool publish(CIEC_STRUCT* data) = 0;
+    virtual std::string registerType(DomainParticipant* pa_pParticipant) = 0;
+    virtual bool validateType(const CStringDictionary::TStringId paTypeId) = 0; 
+    virtual bool publish(CIEC_STRUCT* pa_pData) = 0;
     // read in data and construct a CIEC_STRUCT
-    virtual CIEC_STRUCT receive() = 0;
+    virtual std::optional<CIEC_STRUCT> receive() = 0;
 
   protected:
-    bool write(void* data);
-    ReturnCode_t take(void* data);
+    bool write(void* pa_pData);
+    ReturnCode_t take(bool* pa_pTaken, void* pa_pData);
 
   private:
     std::string m_sTopicName;
@@ -81,12 +97,14 @@ class CDDSPubSub {
         CSubListener() {}
         ~CSubListener() override {}
         
-        CDDSHandler* handler;
+        CDDSHandler* m_pHandler;
 
-        inline void on_data_available(DataReader* m_pReader);
+        inline void on_data_available(DataReader* pa_pReader);
     } mReaderListener;
 
-    std::queue<RequestInfo>* m_pRequestInfos;
+    std::queue<SRequestInfo>* m_pRequestInfos;
+    SequenceNumber_t mSequenceNumber;
+    EPubSubRole m_enRole;
 };
 
 #endif /* _DDSPUBSUB_H_ */

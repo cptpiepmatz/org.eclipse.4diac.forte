@@ -59,6 +59,7 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
   switch (this->m_eCommServiceType) {
 
     case EComServiceType::e_Publisher:
+      this->m_enPubSubRole = EPubSubRole::NONE;
       this->m_sPubTopicName = leftTopicName;
       this->m_sPubTopicType = leftTopicType;
       if (!this->checkIO("Publisher", 1, 0)) return EComResponse::e_InitInvalidId;
@@ -66,6 +67,7 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
       return EComResponse::e_InitOk;
 
     case EComServiceType::e_Subscriber:
+      this->m_enPubSubRole = EPubSubRole::NONE;
       this->m_sSubTopicName = leftTopicName;
       this->m_sSubTopicType = leftTopicType;
       if (!this->checkIO("Subscriber", 0, 1)) return EComResponse::e_InitInvalidId;
@@ -73,11 +75,12 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
       return EComResponse::e_InitOk;
 
     case EComServiceType::e_Server:
+      this->m_enPubSubRole = EPubSubRole::SERVER;
       this->m_sSubTopicName = leftTopicName;
       this->m_sSubTopicType = leftTopicType;
       this->m_sPubTopicName = rightTopicName;
       this->m_sPubTopicType = rightTopicType;
-      this->m_pRequestInfos = new std::queue<RequestInfo>();
+      this->m_pRequestInfos = new std::queue<SRequestInfo>();
       if (!this->checkIO("Server", 1, 1)) return EComResponse::e_InitInvalidId;
       if (!this->openSubscriberConnection()) return EComResponse::e_InitInvalidId;
       this->m_pSubscriber->setIdentityQueue(this->m_pRequestInfos);
@@ -86,13 +89,17 @@ EComResponse CDDSComLayer::openConnection(char *pa_acLayerParameter) {
       return EComResponse::e_InitOk;
 
     case EComServiceType::e_Client:
+      this->m_enPubSubRole = EPubSubRole::CLIENT;
       this->m_sPubTopicName = leftTopicName;
       this->m_sPubTopicType = leftTopicType;
       this->m_sSubTopicName = rightTopicName;
       this->m_sSubTopicType = rightTopicType;
+      this->m_pRequestInfos = new std::queue<SRequestInfo>();
       if (!this->checkIO("Client", 1, 1)) return EComResponse::e_InitInvalidId;
       if (!this->openPublisherConnection()) return EComResponse::e_InitInvalidId;
+      this->m_pPublisher->setIdentityQueue(this->m_pRequestInfos);
       if (!this->openSubscriberConnection()) return EComResponse::e_InitInvalidId;
+      this->m_pSubscriber->setIdentityQueue(this->m_pRequestInfos);
       return EComResponse::e_InitOk;
   }
 }
@@ -146,7 +153,11 @@ bool CDDSComLayer::checkIO(
 bool CDDSComLayer::openPublisherConnection() {
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getSDs();
   
-  this->m_pPublisher = CDDSPubSub::selectPubSub(this->m_sPubTopicName, this->m_sPubTopicType);
+  this->m_pPublisher = CDDSPubSub::selectPubSub(
+    this->m_sPubTopicName, 
+    this->m_sPubTopicType,
+    this->m_enPubSubRole
+  );
   if (this->m_pPublisher == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
     return false;
@@ -166,7 +177,11 @@ bool CDDSComLayer::openPublisherConnection() {
 bool CDDSComLayer::openSubscriberConnection() {
   CIEC_STRUCT* data = (CIEC_STRUCT *) this->getCommFB()->getRDs();
   
-  this->m_pSubscriber = CDDSPubSub::selectPubSub(this->m_sSubTopicName, this->m_sSubTopicType);
+  this->m_pSubscriber = CDDSPubSub::selectPubSub(
+    this->m_sSubTopicName, 
+    this->m_sSubTopicType,
+    this->m_enPubSubRole
+  );
   if (this->m_pSubscriber == nullptr) {
     DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
     return false;
@@ -180,7 +195,7 @@ bool CDDSComLayer::openSubscriberConnection() {
     return false;
   }
 
-  this->getExtEvHandler<CDDSHandler>().registerTopic(this->m_sSubTopicName, this);
+  this->getExtEvHandler<CDDSHandler>().registerLayer(this->m_pSubscriber->getReaderGUID().value(), this);
 
   return true;
 }
@@ -189,7 +204,7 @@ void CDDSComLayer::closeConnection() {
   if (this->m_pPublisher != nullptr) delete this->m_pPublisher;
   if (this->m_pSubscriber != nullptr) {
     delete this->m_pSubscriber;
-    this->getExtEvHandler<CDDSHandler>().unregisterTopic(this->m_sSubTopicName);
+    this->getExtEvHandler<CDDSHandler>().unregisterLayer(this->m_pSubscriber->getReaderGUID().value());
   }
   if (this->m_pRequestInfos != nullptr) delete this->m_pRequestInfos;
 }
@@ -198,16 +213,26 @@ EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
   CIEC_STRUCT* data = (CIEC_STRUCT *) paData;
   char sendDebug[255] = {};
   data->toString(sendDebug, sizeof(sendDebug));
-  DEVLOG_DEBUG((
-    "[DDS Layer] Sending data on '" + 
-    this->m_sPubTopicName + 
-    "': " + 
-    sendDebug + 
-    "\n"
-  ).c_str());
   switch (this->m_pPublisher->publish(data)) {
-    case false: return EComResponse::e_ProcessDataSendFailed;
-    case true: return EComResponse::e_ProcessDataOk;
+    case false: 
+      DEVLOG_DEBUG((
+        "[DDS Layer] Failed to send data on '" +
+        this->m_sPubTopicName +
+        "': " +
+        sendDebug + 
+        "\n"
+      ).c_str());
+      return EComResponse::e_ProcessDataSendFailed;
+
+    case true: 
+      DEVLOG_DEBUG((
+        "[DDS Layer] Sending data on '" + 
+        this->m_sPubTopicName + 
+        "': " + 
+        sendDebug + 
+        "\n"
+      ).c_str());
+      return EComResponse::e_ProcessDataOk;
   }
 }
 
@@ -215,20 +240,25 @@ EComResponse CDDSComLayer::recvData(const void *paData, unsigned int paSize) {
   
   // receive data via the subscriber
   
-  CIEC_STRUCT ciecStruct = this->m_pSubscriber->receive();
-  char recvDebug[255] = {};
-  ciecStruct.toString(recvDebug, sizeof(recvDebug));
-  DEVLOG_DEBUG((
-    "[DDS Layer] Received data on '" + 
-    this->m_sSubTopicName + 
-    "': " + 
-    recvDebug + 
-    "\n"
-  ).c_str());
-  this->getCommFB()->getRDs()->setValue(ciecStruct);
-  this->m_poFb->interruptCommFB(this);
+  std::optional<CIEC_STRUCT> ciecStructOpt = this->m_pSubscriber->receive();
+  if (ciecStructOpt.has_value()) {
+    CIEC_STRUCT ciecStruct = ciecStructOpt.value();
+    char recvDebug[255] = {};
+    ciecStruct.toString(recvDebug, sizeof(recvDebug));
+    DEVLOG_DEBUG((
+      "[DDS Layer] Received data on '" + 
+      this->m_sSubTopicName + 
+      "': " + 
+      recvDebug + 
+      "\n"
+    ).c_str());
+    this->getCommFB()->getRDs()->setValue(ciecStruct);
+    this->m_poFb->interruptCommFB(this);
 
-  return EComResponse::e_ProcessDataOk;
+    return EComResponse::e_ProcessDataOk;
+  }
+
+  return EComResponse::e_Nothing;
 }
 
 EComResponse CDDSComLayer::processInterrupt() {

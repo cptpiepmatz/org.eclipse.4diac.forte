@@ -27,9 +27,11 @@ bool AddTwoIntsResponsePubSub::publish(CIEC_STRUCT* data) {
   return this->write(&addTwoIntsResponse);
 }
 
-CIEC_STRUCT AddTwoIntsResponsePubSub::receive() {
+std::optional<CIEC_STRUCT> AddTwoIntsResponsePubSub::receive() {
   AddTwoInts_Response addTwoIntsResponse;
-  this->take(&addTwoIntsResponse);
+  bool taken;
+  this->take(&taken, &addTwoIntsResponse);
+  if (!taken) return std::nullopt;
 
   CIEC_LINT ciecSum = CIEC_LINT(addTwoIntsResponse.sum());
   CIEC_ROS2_example_interfaces__srv__AddTwoInts__Response ciecStruct =

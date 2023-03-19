@@ -27,9 +27,11 @@ bool SpawnResponsePubSub::publish(CIEC_STRUCT* data) {
   return this->write(&spawnResponse);
 }
 
-CIEC_STRUCT SpawnResponsePubSub::receive() {
+std::optional<CIEC_STRUCT> SpawnResponsePubSub::receive() {
   Spawn_Response spawnResponse;
-  this->take(&spawnResponse);
+  bool taken;
+  this->take(&taken, &spawnResponse);
+  if (!taken) return std::nullopt;
 
   CIEC_STRING ciecName = CIEC_STRING(spawnResponse.name().c_str());
   CIEC_ROS2_turtlesim__srv__Spawn__Response ciecStruct = CIEC_ROS2_turtlesim__srv__Spawn__Response();
