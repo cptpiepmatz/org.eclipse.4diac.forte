@@ -1,6 +1,10 @@
 #include "ddspubsub.h"
 #include "ddshandler.h"
 
+#include "types/action_msgs/msg/GoalInfo/GoalInfoPubSub.h"
+#include "types/action_msgs/srv/CancelGoal/CancelGoalRequestPubSub.h"
+#include "types/action_msgs/srv/CancelGoal/CancelGoalResponsePubSub.h"
+
 #include "types/std_msgs/msg/String/StringPubSub.h"
 
 #include "types/turtlesim/action/RotateAbsolute/RotateAbsoluteFeedbackPubSub.h"
@@ -97,6 +101,14 @@ CDDSPubSub* CDDSPubSub::selectPubSub(
   std::string pa_sTopicType,
   EPubSubRole pa_enPubSubRole
 ) {
+  if (pa_sTopicType == "action_msgs::srv::dds_::CancelGoal_Response_")
+    return new action_msgs::CancelGoalResponsePubSub(pa_sTopicName, pa_enPubSubRole);
+  if (pa_sTopicType == "action_msgs::srv::dds_::CancelGoal_Request_")
+    return new action_msgs::CancelGoalRequestPubSub(pa_sTopicName, pa_enPubSubRole);
+
+  if (pa_sTopicType == "action_msgs::msg::dds_::GoalInfo_")
+    return new action_msgs::GoalInfoPubSub(pa_sTopicName, pa_enPubSubRole);
+
   if (pa_sTopicType == "std_msgs::msg::dds_::String_") 
     return new std_msgs::StringPubSub(pa_sTopicName, pa_enPubSubRole);
 

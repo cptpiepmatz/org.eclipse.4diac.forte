@@ -1,6 +1,9 @@
 #include "modules/ros2/turtlesim/action/RotateAbsolute/ROS2_turtlesim__action__RotateAbsolute__Result.h"
 
 #include "RotateAbsoluteResultPubSub.h"
+#ifdef FORTE_ENABLE_GENERATED_SOURCE_CPP
+#include "RotateAbsoluteResultPubSub_gen.cpp"
+#endif
 
 using namespace turtlesim;
 

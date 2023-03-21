@@ -22,8 +22,8 @@
 #ifndef _FAST_DDS_GENERATED_ACTION_MSGS_MSG_GOALINFO_H_
 #define _FAST_DDS_GENERATED_ACTION_MSGS_MSG_GOALINFO_H_
 
-#include "unique_identifier_msgs/msg/UUID.h"
-#include "builtin_interfaces/msg/Time.h"
+#include "UUID.h"
+#include "Time.h"
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 

@@ -215,7 +215,7 @@ EComResponse CDDSComLayer::sendData(void *paData, unsigned int paSize) {
   data->toString(sendDebug, sizeof(sendDebug));
   switch (this->m_pPublisher->publish(data)) {
     case false: 
-      DEVLOG_DEBUG((
+      DEVLOG_ERROR((
         "[DDS Layer] Failed to send data on '" +
         this->m_sPubTopicName +
         "': " +
