@@ -2,8 +2,13 @@
 #include "ddshandler.h"
 
 #include "types/std_msgs/msg/String/StringPubSub.h"
+
+#include "types/turtlesim/action/RotateAbsolute/RotateAbsoluteFeedbackPubSub.h"
+#include "types/turtlesim/action/RotateAbsolute/RotateAbsoluteGoalPubSub.h"
+#include "types/turtlesim/action/RotateAbsolute/RotateAbsoluteResultPubSub.h"
 #include "types/turtlesim/srv/Spawn/SpawnRequestPubSub.h"
 #include "types/turtlesim/srv/Spawn/SpawnResponsePubSub.h"
+
 #include "types/example_interfaces/srv/AddTwoInts/AddTwoIntsRequestPubSub.h"
 #include "types/example_interfaces/srv/AddTwoInts/AddTwoIntsResponsePubSub.h"
 
@@ -99,6 +104,13 @@ CDDSPubSub* CDDSPubSub::selectPubSub(
     return new turtlesim::SpawnRequestPubSub(pa_sTopicName, pa_enPubSubRole);
   if (pa_sTopicType == "turtlesim::srv::dds_::Spawn_Response") 
     return new turtlesim::SpawnResponsePubSub(pa_sTopicName, pa_enPubSubRole);
+
+  if (pa_sTopicType == "turtlesim::action::dds_::RotateAbsolute_Feedback_")
+    return new turtlesim::RotateAbsoluteFeedbackPubSub(pa_sTopicName, pa_enPubSubRole);
+  if (pa_sTopicType == "turtlesim::action::dds_::RotateAbsolute_Goal_")
+    return new turtlesim::RotateAbsoluteGoalPubSub(pa_sTopicName, pa_enPubSubRole);
+  if (pa_sTopicType == "turtlesim::action::dds_::RotateAbsolute_Result_")
+    return new turtlesim::RotateAbsoluteResultPubSub(pa_sTopicName, pa_enPubSubRole);
 
   if (pa_sTopicType == "example_interfaces::srv::dds_::AddTwoInts_Request_")
     return new example_interfaces::AddTwoIntsRequestPubSub(pa_sTopicName, pa_enPubSubRole);
