@@ -32,14 +32,12 @@ private:
   
   static const TEventID scm_nEventINITID = 0;
   static const TEventID scm_nEventREQID = 1;
-  static const TEventID scm_nEventRSPID = 2;
   
   static const TForteInt16 scm_anEIWithIndexes[];
   static const CStringDictionary::TStringId scm_anEventInputNames[];
   
   static const TEventID scm_nEventINITOID = 0;
   static const TEventID scm_nEventCNFID = 1;
-  static const TEventID scm_nEventINDID = 2;
   
   static const TForteInt16 scm_anEOWithIndexes[];
   static const CStringDictionary::TStringId scm_anEventOutputNames[];
@@ -55,48 +53,36 @@ private:
   static const SCFB_FBFannedOutConnectionData scm_astFannedOutDataConnections[];
   static const SCFB_FBNData scm_stFBNData;
 
-  CIEC_BOOL &st_REQ_QI() {
+  CIEC_BOOL &st_QI() {
     return *static_cast<CIEC_BOOL*>(getDI(0));
   }
   
-  CIEC_BOOL &st_RES_QI() {
-    return *static_cast<CIEC_BOOL*>(getDI(1));
-  }
-  
   CIEC_WSTRING &st_TOPIC_NAME() {
-    return *static_cast<CIEC_WSTRING*>(getDI(2));
+    return *static_cast<CIEC_WSTRING*>(getDI(1));
   }
   
   CIEC_WSTRING &st_TOPIC_TYPE() {
-    return *static_cast<CIEC_WSTRING*>(getDI(3));
+    return *static_cast<CIEC_WSTRING*>(getDI(2));
   }
   
   CIEC_ANY &st_REQ_DATA() {
-    return *static_cast<CIEC_ANY*>(getDI(4));
+    return *static_cast<CIEC_ANY*>(getDI(3));
   }
   
-  CIEC_BOOL &st_REQ_QO() {
+  CIEC_BOOL &st_QO() {
     return *static_cast<CIEC_BOOL*>(getDO(0));
   }
   
-  CIEC_BOOL &st_RES_QO() {
-    return *static_cast<CIEC_BOOL*>(getDO(1));
-  }
-  
-  CIEC_WSTRING &st_REQ_STATUS() {
-    return *static_cast<CIEC_WSTRING*>(getDO(2));
-  }
-  
-  CIEC_WSTRING &st_RES_STATUS() {
-    return *static_cast<CIEC_WSTRING*>(getDO(3));
+  CIEC_WSTRING &st_STATUS() {
+    return *static_cast<CIEC_WSTRING*>(getDO(1));
   }
   
   CIEC_ANY &st_RES_DATA() {
-    return *static_cast<CIEC_ANY*>(getDO(4));
+    return *static_cast<CIEC_ANY*>(getDO(2));
   }
   
 
-  FORTE_FB_DATA_ARRAY(3, 5, 5, 0);
+  FORTE_FB_DATA_ARRAY(2, 4, 3, 0);
 
 public:
   FORTE_SRV_CLIENT(const CStringDictionary::TStringId pa_nInstanceNameId, CResource *pa_poSrcRes) :

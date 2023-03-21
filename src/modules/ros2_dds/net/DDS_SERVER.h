@@ -3,14 +3,14 @@
  ***
  *** This file was generated using the 4DIAC FORTE Export Filter V1.0.x NG!
  ***
- *** Name: SRV_SERVER
- *** Description: ROS 2 SRV Server
+ *** Name: DDS_SERVER
+ *** Description: Wrapper for DDS Publisher and Subscriber Pair as a Client
  *** Version:
-***     1.0: 2023-03-14/derPi -  - 
+***     1.0: 2023-03-15/Tim Hesse -  - 
  *************************************************************************/
 
-#ifndef _SRV_SERVER_H_
-#define _SRV_SERVER_H_
+#ifndef _DDS_SERVER_H_
+#define _DDS_SERVER_H_
 
 #include "cfb.h"
 #include "typelib.h"
@@ -20,8 +20,8 @@
 #include "forte_array_at.h"
 
 
-class FORTE_SRV_SERVER: public CCompositeFB {
-  DECLARE_FIRMWARE_FB(FORTE_SRV_SERVER)
+class FORTE_DDS_SERVER: public CCompositeFB {
+  DECLARE_FIRMWARE_FB(FORTE_DDS_SERVER)
 
 private:
   static const CStringDictionary::TStringId scm_anDataInputNames[];
@@ -57,16 +57,24 @@ private:
     return *static_cast<CIEC_BOOL*>(getDI(0));
   }
   
-  CIEC_WSTRING &st_TOPIC_NAME() {
+  CIEC_WSTRING &st_REQ_TOPIC() {
     return *static_cast<CIEC_WSTRING*>(getDI(1));
   }
   
-  CIEC_WSTRING &st_TOPIC_TYPE() {
+  CIEC_WSTRING &st_REQ_TYPE() {
     return *static_cast<CIEC_WSTRING*>(getDI(2));
   }
   
+  CIEC_WSTRING &st_RES_TOPIC() {
+    return *static_cast<CIEC_WSTRING*>(getDI(3));
+  }
+  
+  CIEC_WSTRING &st_RES_TYPE() {
+    return *static_cast<CIEC_WSTRING*>(getDI(4));
+  }
+  
   CIEC_ANY &st_RES_DATA() {
-    return *static_cast<CIEC_ANY*>(getDI(3));
+    return *static_cast<CIEC_ANY*>(getDI(5));
   }
   
   CIEC_BOOL &st_QO() {
@@ -82,16 +90,16 @@ private:
   }
   
 
-  FORTE_FB_DATA_ARRAY(2, 4, 3, 0);
+  FORTE_FB_DATA_ARRAY(2, 6, 3, 0);
 
 public:
-  FORTE_SRV_SERVER(const CStringDictionary::TStringId pa_nInstanceNameId, CResource *pa_poSrcRes) :
+  FORTE_DDS_SERVER(const CStringDictionary::TStringId pa_nInstanceNameId, CResource *pa_poSrcRes) :
       CCompositeFB(pa_poSrcRes, &scm_stFBInterfaceSpec, pa_nInstanceNameId, &scm_stFBNData, m_anFBConnData, m_anFBVarsData) {
   };
 
-  virtual ~FORTE_SRV_SERVER() = default;
+  virtual ~FORTE_DDS_SERVER() = default;
 };
 
-#endif // _SRV_SERVER_H_
+#endif // _DDS_SERVER_H_
 
 

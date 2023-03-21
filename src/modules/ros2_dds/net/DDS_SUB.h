@@ -4,7 +4,7 @@
  *** This file was generated using the 4DIAC FORTE Export Filter V1.0.x NG!
  ***
  *** Name: DDS_SUB
- *** Description: Wrapper for DDS Subscriber
+ *** Description: Wrapper for DDS Publisher and Subscriber Pair as a Client
  *** Version:
 ***     1.0: 2023-03-15/Tim Hesse -  - 
  *************************************************************************/

@@ -11,12 +11,13 @@ if (FORTE_MODULE_ROS2_DDS)
     SRV_SERVER
 
     # ACTION
-    ACTION_CLIENT
+    # ACTION_CLIENT
 
     # net
-    net/DDS_PUB_SUB
     net/DDS_PUB
     net/DDS_SUB
+    net/DDS_SERVER
+    net/DDS_CLIENT
 
     # util
     util/CONSTRUCT_DDS_ID
