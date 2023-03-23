@@ -13,6 +13,12 @@ if (FORTE_MODULE_ROS2_DDS)
     # ACTION
     # ACTION_CLIENT
 
+    # action
+    action/ACTION_CLIENT_CANCEL_GOAL
+    action/ACTION_CLIENT_FEEDBACK_MESSAGE
+    action/ACTION_CLIENT_GET_RESULT
+    action/ACTION_CLIENT_SEND_GOAL
+
     # net
     net/DDS_PUB
     net/DDS_SUB
