@@ -62,7 +62,7 @@ std::optional<CIEC_STRUCT> CancelGoalRequestPubSub::receive() {
   unsigned int nanosec = request.goal_info().stamp().nanosec();
 
   boost::format fmt(
-    "(goal_info:=(goal_id:=(uuid:[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]),stamp:=(sec:=%d,nanosec:=%d)))"
+    "(goal_info:=(goal_id:=(uuid:=[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]),stamp:=(sec:=%d,nanosec:=%d)))"
   );
   for (const auto& value : uuid) fmt % value;
   fmt % sec % nanosec;
