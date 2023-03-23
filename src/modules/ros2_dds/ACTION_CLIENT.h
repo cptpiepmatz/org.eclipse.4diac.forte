@@ -16,8 +16,8 @@
 #include "typelib.h"
 #include "forte_any.h"
 #include "forte_bool.h"
-#include "forte_ros2_action_msgs__srv__cancelgoal__request.h"
-#include "forte_ros2_action_msgs__srv__cancelgoal__response.h"
+#include "modules/ros2/action_msgs/srv/CancelGoal/ROS2_action_msgs__srv__CancelGoal__Request.h"
+#include "modules/ros2/action_msgs/srv/CancelGoal/ROS2_action_msgs__srv__CancelGoal__Response.h"
 #include "forte_wstring.h"
 #include "forte_array_at.h"
 
