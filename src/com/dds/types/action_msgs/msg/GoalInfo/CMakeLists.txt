@@ -3,8 +3,10 @@ forte_add_sourcefile_cpp(
   GoalInfoPubSubTypes.cxx
   Time.cxx
   TimePubSubTypes.cxx
-  UUID.cxx
-  UUIDPubSubTypes.cxx
+
+  # already defined
+  # UUID.cxx
+  # UUIDPubSubTypes.cxx
 )
 
 forte_add_sourcefile_h(

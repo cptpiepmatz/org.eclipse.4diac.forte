@@ -24,6 +24,10 @@ if(FORTE_COM_DDS)
   add_subdirectory("types/example_interfaces")
   add_subdirectory("types/std_msgs")
   add_subdirectory("types/turtlesim")
+  add_subdirectory("types/unique_identifier_msgs")
+
+  # include util
+  forte_add_sourcefile_hcpp(util/convert)
 
   # add link libraries
   forte_add_link_library(

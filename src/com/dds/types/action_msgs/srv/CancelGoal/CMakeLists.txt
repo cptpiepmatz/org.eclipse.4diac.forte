@@ -2,7 +2,7 @@ forte_add_sourcefile_cpp(
   CancelGoal.cxx
   CancelGoalPubSubTypes.cxx
 
-  # already defined in the GoalInfo
+  # already defined
   # GoalInfo.cxx 
   # GoalInfoPubSubTypes.cxx
   # Time.cxx
