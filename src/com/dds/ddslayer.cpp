@@ -183,11 +183,19 @@ bool CDDSComLayer::openSubscriberConnection() {
     this->m_enPubSubRole
   );
   if (this->m_pSubscriber == nullptr) {
-    DEVLOG_ERROR("[DDS Layer] Topic type unknown.\n");
+    DEVLOG_ERROR((
+      "[DDS Layer] Topic type unknown: " + 
+      this->m_sSubTopicType + 
+      "\n"
+    ).c_str());
     return false;
   }
   if (!this->m_pSubscriber->validateType(data->getStructTypeNameID())) {
-    DEVLOG_ERROR("[DDS Layer] Data type not correct.\n");
+    DEVLOG_ERROR((
+      "[DDS Layer] Data type not correct: " +
+      this->m_sSubTopicType + 
+      "\n"
+    ).c_str());
     return false;
   }
   if (!this->m_pSubscriber->initSubscriber(&this->getExtEvHandler<CDDSHandler>())) {
