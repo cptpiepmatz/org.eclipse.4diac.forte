@@ -29,6 +29,7 @@ if (FORTE_MODULE_ROS2_DDS)
     util/CONSTRUCT_DDS_ID
     util/CONSTRUCT_DDS_TOPIC
     util/CONSTRUCT_DDS_TYPE
+    util/GEN_UUID
 
   )
 endif()
