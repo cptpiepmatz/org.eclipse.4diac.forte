@@ -57,7 +57,7 @@ const SCFB_FBParameter FORTE_ACTION_CLIENT_GET_RESULT::scm_astParamters[] = {
   {2, g_nStringIdPREFIX, "\"rr\""},
   {2, g_nStringIdSUFFIX, "\"/_action/get_resultReply\""},
   {3, g_nStringIdSUFFIX, "\"_GetResult_Request_\""},
-  {4, g_nStringIdSUFFIX, "\"_GetResult_Response\""},
+  {4, g_nStringIdSUFFIX, "\"_GetResult_Response_\""},
 };
 
 const SCFB_FBConnectionData FORTE_ACTION_CLIENT_GET_RESULT::scm_astEventConnections[] = {
