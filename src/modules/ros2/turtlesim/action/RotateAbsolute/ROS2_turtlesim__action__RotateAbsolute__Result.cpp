@@ -13,7 +13,6 @@
 #ifdef FORTE_ENABLE_GENERATED_SOURCE_CPP
 #include "ROS2_turtlesim__action__RotateAbsolute__Result_gen.cpp"
 #endif
-
 DEFINE_FIRMWARE_DATATYPE(ROS2_turtlesim__action__RotateAbsolute__Result, g_nStringIdROS2_turtlesim__action__RotateAbsolute__Result);
 
 CIEC_ROS2_turtlesim__action__RotateAbsolute__Result::CIEC_ROS2_turtlesim__action__RotateAbsolute__Result() :
