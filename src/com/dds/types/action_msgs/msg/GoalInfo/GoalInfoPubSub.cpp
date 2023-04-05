@@ -1,3 +1,5 @@
+#include "../../../../util/convert.h"
+
 #include "modules/ros2/action_msgs/msg/GoalInfo/ROS2_action_msgs__msg__GoalInfo.h"
 
 #include "GoalInfoPubSub.h"
@@ -7,8 +9,6 @@
 
 #include "UUIDPubSubTypes.h"
 #include "TimePubSubTypes.h"
-
-#include <boost/format.hpp>
 
 using namespace action_msgs;
 using namespace builtin_interfaces::msg;
@@ -55,14 +55,14 @@ std::optional<CIEC_STRUCT> GoalInfoPubSub::receive() {
   int sec = goalInfo.stamp().sec();
   unsigned int nanosec = goalInfo.stamp().nanosec();
 
-  boost::format fmt(
-    "(goal_id:=(uuid:=[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]),stamp:=(sec:=%d,nanosec:=%d))"
-  );
-  for (const auto& value : uuid) fmt % value;
-  fmt % sec % nanosec;
+  CIEC_ROS2_unique_identifier_msgs__msg__UUID ciecUUID = dds2ciec(goalInfo.goal_id());
+  CIEC_ROS2_builtin_interfaces__msg__Time ciecTime;
+  ciecTime.nanosec() = goalInfo.stamp().nanosec();
+  ciecTime.sec() = goalInfo.stamp().sec();
 
   CIEC_ROS2_action_msgs__msg__GoalInfo ciecStruct;
-  ciecStruct.fromString(fmt.str().c_str());
+  ciecStruct.stamp() = ciecTime;
+  ciecStruct.goal_id() = ciecUUID;
 
   return ciecStruct;
 }
