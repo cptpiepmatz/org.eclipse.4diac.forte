@@ -17,26 +17,26 @@
 
 DEFINE_FIRMWARE_FB(FORTE_ACTION_SERVER, g_nStringIdACTION_SERVER)
 
-const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataInputNames[] = {g_nStringIdSEND_GOAL_QI, g_nStringIdCANCEL_GOAL_QI, g_nStringIdGET_RESULT_QI, g_nStringIdFEEDBACK_QI, g_nStringIdTOPIC_NAME, g_nStringIdTOPIC_TYPE, g_nStringIdSEND_GOAL_RES_DATA, g_nStringIdCANCEL_GOAL_RES_DATA, g_nStringIdGET_RESULT_RES_DATA, g_nStringIdFEEDBACK_DATA};
+const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataInputNames[] = {g_nStringIdSEND_GOAL_QI, g_nStringIdCANCEL_GOAL_QI, g_nStringIdGET_RESULT_QI, g_nStringIdFEEDBACK_QI, g_nStringIdSTATUS_QI, g_nStringIdTOPIC_NAME, g_nStringIdTOPIC_TYPE, g_nStringIdSEND_GOAL_RES_DATA, g_nStringIdCANCEL_GOAL_RES_DATA, g_nStringIdGET_RESULT_RES_DATA, g_nStringIdFEEDBACK_DATA, g_nStringIdSTATUS_DATA};
 
-const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataInputTypeIds[] = {g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdANY, g_nStringIdROS2_action_msgs__srv__CancelGoal__Response, g_nStringIdANY, g_nStringIdANY};
+const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataInputTypeIds[] = {g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdANY, g_nStringIdROS2_action_msgs__srv__CancelGoal__Response, g_nStringIdANY, g_nStringIdANY, g_nStringIdROS2_action_msgs__msg__GoalStatusArray};
 
-const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataOutputNames[] = {g_nStringIdSEND_GOAL_QO, g_nStringIdCANCEL_GOAL_QO, g_nStringIdGET_RESULT_QO, g_nStringIdFEEDBACK_QO, g_nStringIdSEND_GOAL_STATUS, g_nStringIdCANCEL_GOAL_STATUS, g_nStringIdGET_RESULT_STATUS, g_nStringIdFEEDBACK_STATUS, g_nStringIdSEND_GOAL_REQ_DATA, g_nStringIdCANCEL_GOAL_REQ_DATA, g_nStringIdGET_RESULT_REQ_DATA};
+const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataOutputNames[] = {g_nStringIdSEND_GOAL_QO, g_nStringIdCANCEL_GOAL_QO, g_nStringIdGET_RESULT_QO, g_nStringIdFEEDBACK_QO, g_nStringIdSTATUS_QO, g_nStringIdSEND_GOAL_STATUS, g_nStringIdCANCEL_GOAL_STATUS, g_nStringIdGET_RESULT_STATUS, g_nStringIdFEEDBACK_STATUS, g_nStringIdSTATUS_STATUS, g_nStringIdSEND_GOAL_REQ_DATA, g_nStringIdCANCEL_GOAL_REQ_DATA, g_nStringIdGET_RESULT_REQ_DATA};
 
-const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataOutputTypeIds[] = {g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdANY, g_nStringIdROS2_action_msgs__srv__CancelGoal__Request, g_nStringIdANY};
+const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anDataOutputTypeIds[] = {g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdBOOL, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdWSTRING, g_nStringIdANY, g_nStringIdROS2_action_msgs__srv__CancelGoal__Request, g_nStringIdANY};
 
-const TForteInt16 FORTE_ACTION_SERVER::scm_anEIWithIndexes[] = {-1, -1, -1, -1, -1};
-const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anEventInputNames[] = {g_nStringIdINIT, g_nStringIdSEND_GOAL_RSP, g_nStringIdCANCEL_GOAL_RSP, g_nStringIdGET_RESULT_RSP, g_nStringIdFEEDBACK_REQ};
+const TForteInt16 FORTE_ACTION_SERVER::scm_anEIWithIndexes[] = {-1, -1, -1, -1, -1, -1};
+const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anEventInputNames[] = {g_nStringIdINIT, g_nStringIdSEND_GOAL_RSP, g_nStringIdCANCEL_GOAL_RSP, g_nStringIdGET_RESULT_RSP, g_nStringIdFEEDBACK_REQ, g_nStringIdSTATUS_REQ};
 
-const TForteInt16 FORTE_ACTION_SERVER::scm_anEOWithIndexes[] = {-1, -1, -1, -1, -1};
-const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anEventOutputNames[] = {g_nStringIdINITO, g_nStringIdSEND_GOAL_IND, g_nStringIdCANCEL_GOAL_IND, g_nStringIdGET_RESULT_IND, g_nStringIdFEEDBACK_CNF};
+const TForteInt16 FORTE_ACTION_SERVER::scm_anEOWithIndexes[] = {-1, -1, -1, -1, -1, -1};
+const CStringDictionary::TStringId FORTE_ACTION_SERVER::scm_anEventOutputNames[] = {g_nStringIdINITO, g_nStringIdSEND_GOAL_IND, g_nStringIdCANCEL_GOAL_IND, g_nStringIdGET_RESULT_IND, g_nStringIdFEEDBACK_CNF, g_nStringIdSTATUS_CNF};
 
 
 const SFBInterfaceSpec FORTE_ACTION_SERVER::scm_stFBInterfaceSpec = {
-  5, scm_anEventInputNames, nullptr, scm_anEIWithIndexes,
-  5, scm_anEventOutputNames, nullptr, scm_anEOWithIndexes,
-  10, scm_anDataInputNames, scm_anDataInputTypeIds,
-  11, scm_anDataOutputNames, scm_anDataOutputTypeIds,
+  6, scm_anEventInputNames, nullptr, scm_anEIWithIndexes,
+  6, scm_anEventOutputNames, nullptr, scm_anEOWithIndexes,
+  12, scm_anDataInputNames, scm_anDataInputTypeIds,
+  13, scm_anDataOutputNames, scm_anDataOutputTypeIds,
   0, nullptr
 };
 
@@ -47,7 +47,9 @@ const SCFB_FBInstanceData FORTE_ACTION_SERVER::scm_astInternalFBs[] = {
   {g_nStringIdACTION_SERVER_SEND_GOAL, g_nStringIdACTION_SERVER_SEND_GOAL},
   {g_nStringIdACTION_SERVER_CANCEL_GOAL, g_nStringIdACTION_SERVER_CANCEL_GOAL},
   {g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdACTION_SERVER_GET_RESULT},
-  {g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE}
+  {g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE},
+  {g_nStringIdACTION_SERVER_STATUS, g_nStringIdACTION_SERVER_STATUS},
+  {g_nStringIdE_REND_3, g_nStringIdE_REND}
 };
 
 
@@ -63,17 +65,22 @@ const SCFB_FBConnectionData FORTE_ACTION_SERVER::scm_astEventConnections[] = {
   {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdCANCEL_GOAL_RSP), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_CANCEL_GOAL, g_nStringIdRSP), 4},
   {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdGET_RESULT_RSP), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdRSP), 5},
   {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdFEEDBACK_REQ), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdREQ), 6},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_2, g_nStringIdEO), 2, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdINITO), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_SEND_GOAL, g_nStringIdIND), 3, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSEND_GOAL_IND), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_CANCEL_GOAL, g_nStringIdIND), 4, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdCANCEL_GOAL_IND), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdIND), 5, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdGET_RESULT_IND), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdCNF), 6, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdFEEDBACK_CNF), -1},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_2, g_nStringIdEO), 2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_3, g_nStringIdEI2), 8},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_3, g_nStringIdEO), 8, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdINITO), -1},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdINITO), 7, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND_3, g_nStringIdEI1), 8},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdCNF), 7, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSTATUS_CNF), -1},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSTATUS_REQ), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdREQ), 7},
 };
 
 const SCFB_FBFannedOutConnectionData FORTE_ACTION_SERVER::scm_astFannedOutEventConnections[] = {
   {6, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_CANCEL_GOAL, g_nStringIdINIT), 4},
   {6, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdINIT), 5},
   {6, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdINIT), 6},
+  {6, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdINIT), 7},
 };
 
 const SCFB_FBConnectionData FORTE_ACTION_SERVER::scm_astDataConnections[] = {
@@ -98,22 +105,27 @@ const SCFB_FBConnectionData FORTE_ACTION_SERVER::scm_astDataConnections[] = {
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdREQ_DATA), 5, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdGET_RESULT_REQ_DATA), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdQO), 6, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdFEEDBACK_QO), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdSTATUS), 6, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdFEEDBACK_STATUS), -1},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdQO), 7, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSTATUS_QO), -1},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdSTATUS), 7, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSTATUS_STATUS), -1},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSTATUS_QI), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdQI), 7},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdSTATUS_DATA), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdPUB_DATA), 7},
 };
 
 const SCFB_FBFannedOutConnectionData FORTE_ACTION_SERVER::scm_astFannedOutDataConnections[] = {
   {4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_CANCEL_GOAL, g_nStringIdTOPIC_NAME), 4},
   {4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdTOPIC_NAME), 5},
   {4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdTOPIC_NAME), 6},
+  {4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_STATUS, g_nStringIdTOPIC_NAME), 7},
   {5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_GET_RESULT, g_nStringIdTOPIC_TYPE), 5},
   {5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdACTION_SERVER_FEEDBACK_MESSAGE, g_nStringIdTOPIC_TYPE), 6},
 };
 
 const SCFB_FBNData FORTE_ACTION_SERVER::scm_stFBNData = {
-  7, scm_astInternalFBs,
-  16, scm_astEventConnections,
-  3, scm_astFannedOutEventConnections,
-  21, scm_astDataConnections,
-  5, scm_astFannedOutDataConnections,
+  9, scm_astInternalFBs,
+  20, scm_astEventConnections,
+  4, scm_astFannedOutEventConnections,
+  25, scm_astDataConnections,
+  6, scm_astFannedOutDataConnections,
   0, nullptr
 };
 

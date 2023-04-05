@@ -2,6 +2,7 @@
 #include "ddshandler.h"
 
 #include "types/action_msgs/msg/GoalInfo/GoalInfoPubSub.h"
+#include "types/action_msgs/msg/GoalStatusArray/GoalStatusArrayPubSub.h"
 #include "types/action_msgs/srv/CancelGoal/CancelGoalRequestPubSub.h"
 #include "types/action_msgs/srv/CancelGoal/CancelGoalResponsePubSub.h"
 
@@ -113,6 +114,8 @@ CDDSPubSub* CDDSPubSub::selectPubSub(
 
   if (pa_sTopicType == "action_msgs::msg::dds_::GoalInfo_")
     return new action_msgs::GoalInfoPubSub(pa_sTopicName, pa_enPubSubRole);
+  if (pa_sTopicType == "action_msgs::msg::dds_::GoalStatusArray_")
+    return new action_msgs::GoalStatusArrayPubSub(pa_sTopicName, pa_enPubSubRole);
 
   if (pa_sTopicType == "std_msgs::msg::dds_::String_") 
     return new std_msgs::StringPubSub(pa_sTopicName, pa_enPubSubRole);

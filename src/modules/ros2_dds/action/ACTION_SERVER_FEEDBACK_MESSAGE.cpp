@@ -60,6 +60,7 @@ const SCFB_FBConnectionData FORTE_ACTION_SERVER_FEEDBACK_MESSAGE::scm_astEventCo
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_REND, g_nStringIdEO), 0, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdDDS_PUB, g_nStringIdINIT), 3},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdDDS_PUB, g_nStringIdINITO), 3, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdINITO), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdDDS_PUB, g_nStringIdCNF), 3, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdCNF), -1},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdREQ), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdDDS_PUB, g_nStringIdREQ), 3},
 };
 
 const SCFB_FBFannedOutConnectionData FORTE_ACTION_SERVER_FEEDBACK_MESSAGE::scm_astFannedOutEventConnections[] = {
@@ -79,7 +80,7 @@ const SCFB_FBConnectionData FORTE_ACTION_SERVER_FEEDBACK_MESSAGE::scm_astDataCon
 
 const SCFB_FBNData FORTE_ACTION_SERVER_FEEDBACK_MESSAGE::scm_stFBNData = {
   4, scm_astInternalFBs,
-  6, scm_astEventConnections,
+  7, scm_astEventConnections,
   1, scm_astFannedOutEventConnections,
   8, scm_astDataConnections,
   0, nullptr,

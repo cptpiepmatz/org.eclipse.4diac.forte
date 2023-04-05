@@ -43,9 +43,9 @@ const SFBInterfaceSpec FORTE_RotateAbsolute::scm_stFBInterfaceSpec = {
 };
 
 const SCFB_FBInstanceData FORTE_RotateAbsolute::scm_astInternalFBs[] = {
-  {g_nStringIdFB_CTU, g_nStringIdFB_CTU},
   {g_nStringIdE_CYCLE, g_nStringIdE_CYCLE},
-  {g_nStringIdF_LT, g_nStringIdF_LT},
+  {g_nStringIdFB_CTU, g_nStringIdFB_CTU},
+  {g_nStringIdF_GE, g_nStringIdF_GE},
   {g_nStringIdINT2INT, g_nStringIdINT2INT},
   {g_nStringIdE_SWITCH, g_nStringIdE_SWITCH},
   {g_nStringIdFB_RANDOM, g_nStringIdFB_RANDOM},
@@ -53,36 +53,40 @@ const SCFB_FBInstanceData FORTE_RotateAbsolute::scm_astInternalFBs[] = {
 };
 
 const SCFB_FBParameter FORTE_RotateAbsolute::scm_astParamters[] = {
-  {0, g_nStringIdCU, "1"},
-  {0, g_nStringIdPV, "0"},
-  {1, g_nStringIdDT, "T#1s"},
+  {0, g_nStringIdDT, "T#1s"},
+  {1, g_nStringIdCU, "1"},
+  {1, g_nStringIdPV, "0"},
   {3, g_nStringIdIN, "10"},
-  {6, g_nStringIdIN, "22.2"},
+  {6, g_nStringIdIN, "12.3"},
 };
 
 const SCFB_FBConnectionData FORTE_RotateAbsolute::scm_astEventConnections[] = {
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdCNF), 0, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdINT2INT, g_nStringIdREQ), 3},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdINT2INT, g_nStringIdCNF), 3, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_LT, g_nStringIdREQ), 2},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_CYCLE, g_nStringIdEO), 1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdREQ), 0},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_LT, g_nStringIdCNF), 2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdEI), 4},
-  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdROTATE), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdINIT), 5},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdINITO), 5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_CYCLE, g_nStringIdSTART), 1},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdEO1), 4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdREQ), 5},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdINT2INT, g_nStringIdCNF), 3, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_GE, g_nStringIdREQ), 2},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdCNF), 1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdINT2INT, g_nStringIdREQ), 3},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_GE, g_nStringIdCNF), 2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdEI), 4},
+  {GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdROTATE), -1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_CYCLE, g_nStringIdSTART), 0},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_CYCLE, g_nStringIdEO), 0, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdREQ), 1},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdEO1), 4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_CYCLE, g_nStringIdSTOP), 0},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdEO0), 4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdINIT), 5},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdINITO), 5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdREQ), 5},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdCNF), 5, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdFDBK), -1},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdEO0), 4, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_CYCLE, g_nStringIdSTOP), 1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdREAL2REAL, g_nStringIdCNF), 6, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdDONE), -1},
 };
 
 const SCFB_FBFannedOutConnectionData FORTE_RotateAbsolute::scm_astFannedOutEventConnections[] = {
-  {8, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdREAL2REAL, g_nStringIdREQ), 6},
+  {5, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdREAL2REAL, g_nStringIdREQ), 6},
 };
 
 const SCFB_FBConnectionData FORTE_RotateAbsolute::scm_astDataConnections[] = {
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdCV), 0, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_LT, g_nStringIdIN1), 2},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdINT2INT, g_nStringIdOUT), 3, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_LT, g_nStringIdIN2), 2},
-  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_LT, g_nStringIdOUT), 2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdG), 4},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdINT2INT, g_nStringIdOUT), 3, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_GE, g_nStringIdIN2), 2},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdCV), 1, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_GE, g_nStringIdIN1), 2},
+  {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdF_GE, g_nStringIdOUT), 2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdE_SWITCH, g_nStringIdG), 4},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_RANDOM, g_nStringIdVAL), 5, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdREMAINING), -1},
   {GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdREAL2REAL, g_nStringIdOUT), 6, GENERATE_CONNECTION_PORT_ID_1_ARG(g_nStringIdDELTA), -1},
+};
+
+const SCFB_FBFannedOutConnectionData FORTE_RotateAbsolute::scm_astFannedOutDataConnections[] = {
+  {2, GENERATE_CONNECTION_PORT_ID_2_ARG(g_nStringIdFB_CTU, g_nStringIdR), 1},
 };
 
 const SCFB_FBNData FORTE_RotateAbsolute::scm_stFBNData = {
@@ -90,7 +94,7 @@ const SCFB_FBNData FORTE_RotateAbsolute::scm_stFBNData = {
   10, scm_astEventConnections,
   1, scm_astFannedOutEventConnections,
   5, scm_astDataConnections,
-  0, nullptr,
+  1, scm_astFannedOutDataConnections,
   5, scm_astParamters
 };
 

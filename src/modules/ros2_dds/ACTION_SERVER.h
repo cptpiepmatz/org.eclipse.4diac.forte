@@ -16,6 +16,7 @@
 #include "typelib.h"
 #include "forte_any.h"
 #include "forte_bool.h"
+#include "modules/ros2/action_msgs/msg/GoalStatusArray/ROS2_action_msgs__msg__GoalStatusArray.h"
 #include "modules/ros2/action_msgs/srv/CancelGoal/ROS2_action_msgs__srv__CancelGoal__Request.h"
 #include "modules/ros2/action_msgs/srv/CancelGoal/ROS2_action_msgs__srv__CancelGoal__Response.h"
 #include "forte_wstring.h"
@@ -37,6 +38,7 @@ private:
   static const TEventID scm_nEventCANCEL_GOAL_RSPID = 2;
   static const TEventID scm_nEventGET_RESULT_RSPID = 3;
   static const TEventID scm_nEventFEEDBACK_REQID = 4;
+  static const TEventID scm_nEventSTATUS_REQID = 5;
   
   static const TForteInt16 scm_anEIWithIndexes[];
   static const CStringDictionary::TStringId scm_anEventInputNames[];
@@ -46,6 +48,7 @@ private:
   static const TEventID scm_nEventCANCEL_GOAL_INDID = 2;
   static const TEventID scm_nEventGET_RESULT_INDID = 3;
   static const TEventID scm_nEventFEEDBACK_CNFID = 4;
+  static const TEventID scm_nEventSTATUS_CNFID = 5;
   
   static const TForteInt16 scm_anEOWithIndexes[];
   static const CStringDictionary::TStringId scm_anEventOutputNames[];
@@ -77,28 +80,36 @@ private:
     return *static_cast<CIEC_BOOL*>(getDI(3));
   }
   
-  CIEC_WSTRING &st_TOPIC_NAME() {
-    return *static_cast<CIEC_WSTRING*>(getDI(4));
+  CIEC_BOOL &st_STATUS_QI() {
+    return *static_cast<CIEC_BOOL*>(getDI(4));
   }
   
-  CIEC_WSTRING &st_TOPIC_TYPE() {
+  CIEC_WSTRING &st_TOPIC_NAME() {
     return *static_cast<CIEC_WSTRING*>(getDI(5));
   }
   
+  CIEC_WSTRING &st_TOPIC_TYPE() {
+    return *static_cast<CIEC_WSTRING*>(getDI(6));
+  }
+  
   CIEC_ANY &st_SEND_GOAL_RES_DATA() {
-    return *static_cast<CIEC_ANY*>(getDI(6));
+    return *static_cast<CIEC_ANY*>(getDI(7));
   }
   
   CIEC_ROS2_action_msgs__srv__CancelGoal__Response &st_CANCEL_GOAL_RES_DATA() {
-    return *static_cast<CIEC_ROS2_action_msgs__srv__CancelGoal__Response*>(getDI(7));
+    return *static_cast<CIEC_ROS2_action_msgs__srv__CancelGoal__Response*>(getDI(8));
   }
   
   CIEC_ANY &st_GET_RESULT_RES_DATA() {
-    return *static_cast<CIEC_ANY*>(getDI(8));
+    return *static_cast<CIEC_ANY*>(getDI(9));
   }
   
   CIEC_ANY &st_FEEDBACK_DATA() {
-    return *static_cast<CIEC_ANY*>(getDI(9));
+    return *static_cast<CIEC_ANY*>(getDI(10));
+  }
+  
+  CIEC_ROS2_action_msgs__msg__GoalStatusArray &st_STATUS_DATA() {
+    return *static_cast<CIEC_ROS2_action_msgs__msg__GoalStatusArray*>(getDI(11));
   }
   
   CIEC_BOOL &st_SEND_GOAL_QO() {
@@ -117,36 +128,44 @@ private:
     return *static_cast<CIEC_BOOL*>(getDO(3));
   }
   
-  CIEC_WSTRING &st_SEND_GOAL_STATUS() {
-    return *static_cast<CIEC_WSTRING*>(getDO(4));
+  CIEC_BOOL &st_STATUS_QO() {
+    return *static_cast<CIEC_BOOL*>(getDO(4));
   }
   
-  CIEC_WSTRING &st_CANCEL_GOAL_STATUS() {
+  CIEC_WSTRING &st_SEND_GOAL_STATUS() {
     return *static_cast<CIEC_WSTRING*>(getDO(5));
   }
   
-  CIEC_WSTRING &st_GET_RESULT_STATUS() {
+  CIEC_WSTRING &st_CANCEL_GOAL_STATUS() {
     return *static_cast<CIEC_WSTRING*>(getDO(6));
   }
   
-  CIEC_WSTRING &st_FEEDBACK_STATUS() {
+  CIEC_WSTRING &st_GET_RESULT_STATUS() {
     return *static_cast<CIEC_WSTRING*>(getDO(7));
   }
   
+  CIEC_WSTRING &st_FEEDBACK_STATUS() {
+    return *static_cast<CIEC_WSTRING*>(getDO(8));
+  }
+  
+  CIEC_WSTRING &st_STATUS_STATUS() {
+    return *static_cast<CIEC_WSTRING*>(getDO(9));
+  }
+  
   CIEC_ANY &st_SEND_GOAL_REQ_DATA() {
-    return *static_cast<CIEC_ANY*>(getDO(8));
-  }
-  
-  CIEC_ROS2_action_msgs__srv__CancelGoal__Request &st_CANCEL_GOAL_REQ_DATA() {
-    return *static_cast<CIEC_ROS2_action_msgs__srv__CancelGoal__Request*>(getDO(9));
-  }
-  
-  CIEC_ANY &st_GET_RESULT_REQ_DATA() {
     return *static_cast<CIEC_ANY*>(getDO(10));
   }
   
+  CIEC_ROS2_action_msgs__srv__CancelGoal__Request &st_CANCEL_GOAL_REQ_DATA() {
+    return *static_cast<CIEC_ROS2_action_msgs__srv__CancelGoal__Request*>(getDO(11));
+  }
+  
+  CIEC_ANY &st_GET_RESULT_REQ_DATA() {
+    return *static_cast<CIEC_ANY*>(getDO(12));
+  }
+  
 
-  FORTE_FB_DATA_ARRAY(5, 10, 11, 0);
+  FORTE_FB_DATA_ARRAY(6, 12, 13, 0);
 
 public:
   FORTE_ACTION_SERVER(const CStringDictionary::TStringId pa_nInstanceNameId, CResource *pa_poSrcRes) :
