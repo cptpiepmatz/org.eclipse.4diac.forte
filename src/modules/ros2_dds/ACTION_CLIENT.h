@@ -4,9 +4,9 @@
  *** This file was generated using the 4DIAC FORTE Export Filter V1.0.x NG!
  ***
  *** Name: ACTION_CLIENT
- *** Description: Subapplication Type
+ *** Description: 
  *** Version:
-***     1.0: 2023-03-21/derPi -  - 
+***     1.0: 2023-03-21/Tim Hesse -  - 
  *************************************************************************/
 
 #ifndef _ACTION_CLIENT_H_
