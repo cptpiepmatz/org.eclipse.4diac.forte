@@ -10,6 +10,19 @@ It uses FastDDS 2.3.6 (version used for that ROS version) to communicate.
 
 The work can be found [here](https://cptpiepmatz.de/ba-tim-hesse.pdf).
 
+To enable the usage of this you need to enable some options in the CMake setup:
+- `FORTE_COM_DDS` The DDS communication implementation.
+- `FORTE_MODULE_ROS2` The ROS2 communication types.
+- `FORTE_MODULE_ROS2_DDS` The ROS2 wrapper function blocks.
+
+These features are just useful to build applications:
+- `FORTE_MODULE_CONVERT`
+- `FORTE_MODULE_UTILS`
+- `FORTE_MODULE_IEC61131`
+
+This is a hard requirement, otherwise will FastDDS throw a segfault.
+- `FORTE_RTTI_AND_EXCEPTIONS`
+
 ## License
 
 Eclipse 4diac IDE is licensed under an [EPL 2.0](LICENSE.md).
