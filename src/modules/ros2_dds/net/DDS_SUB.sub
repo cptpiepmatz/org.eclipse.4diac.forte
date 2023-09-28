@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="DDS_SUB" Comment="Wrapper for DDS Publisher and Subscriber Pair as a Client">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="Tim Hesse" Date="2023-03-15">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="INIT" Type="Event" Comment="Initialization Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="77"/>
+			</SubAppEvent>
+			<SubAppEvent Name="RSP" Type="Event" Comment="Application Response to IND">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="INITO" Type="Event" Comment="Initialization Confirm">
+				<Attribute Name="YPOSITION" Type="STRING" Value="57"/>
+			</SubAppEvent>
+			<SubAppEvent Name="IND" Type="Event" Comment="Confirmation of Requested Service">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="QI" Type="BOOL" Comment="Input event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="8"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC" Type="WSTRING" Comment="DDS Topic">
+				<Attribute Name="YPOSITION" Type="STRING" Value="98"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TYPE" Type="WSTRING" Comment="DDS Type">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="QO" Type="BOOL" Comment="Output event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+			<VarDeclaration Name="STATUS" Type="WSTRING" Comment="Service Status">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="SUB_DATA" Type="ANY" Comment="Subscribed Data">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<FB Name="CONSTRUCT_DDS_ID" Type="CONSTRUCT_DDS_ID" Comment="" x="1360.0" y="-225.0">
+		</FB>
+		<FB Name="SUBSCRIBE_1" Type="SUBSCRIBE_1" Comment="" x="2720.0" y="-815.0">
+		</FB>
+		<EventConnections>
+			<Connection Source="INIT" Destination="CONSTRUCT_DDS_ID.REQ1" Comment="" dx1="305.0"/>
+			<Connection Source="CONSTRUCT_DDS_ID.CNF" Destination="SUBSCRIBE_1.INIT" Comment="" dx1="55.0"/>
+			<Connection Source="RSP" Destination="SUBSCRIBE_1.RSP" Comment="" dx1="1415.0"/>
+			<Connection Source="SUBSCRIBE_1.IND" Destination="IND" Comment="" dx1="765.0"/>
+			<Connection Source="SUBSCRIBE_1.INITO" Destination="INITO" Comment="" dx1="765.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="TOPIC" Destination="CONSTRUCT_DDS_ID.TOPIC_L" Comment="" dx1="180.0"/>
+			<Connection Source="TYPE" Destination="CONSTRUCT_DDS_ID.TYPE_L" Comment="" dx1="180.0"/>
+			<Connection Source="QI" Destination="SUBSCRIBE_1.QI" Comment="" dx1="860.0"/>
+			<Connection Source="CONSTRUCT_DDS_ID.ID" Destination="SUBSCRIBE_1.ID" Comment="" dx1="105.0"/>
+			<Connection Source="SUBSCRIBE_1.RD_1" Destination="SUB_DATA" Comment="" dx1="765.0"/>
+			<Connection Source="SUBSCRIBE_1.STATUS" Destination="STATUS" Comment="" dx1="765.0"/>
+			<Connection Source="SUBSCRIBE_1.QO" Destination="QO" Comment="" dx1="765.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>

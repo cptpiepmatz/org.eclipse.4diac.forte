@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="CONCAT_WSTRING" Comment="Subapplication Type">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="derPi" Date="2023-04-10">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="REQ" Type="Event" Comment="Normal Execution Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="57"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="CNF" Type="Event" Comment="Execution Confirmation">
+				<Attribute Name="YPOSITION" Type="STRING" Value="104"/>
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="LEFT" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="28"/>
+			</VarDeclaration>
+			<VarDeclaration Name="RIGHT" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="112"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="OUT" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<FB Name="WSTRING2WSTRING" Type="WSTRING2WSTRING" Comment="" x="-640.0" y="-815.0">
+		</FB>
+		<FB Name="WSTRING2WSTRING_1" Type="WSTRING2WSTRING" Comment="" x="-640.0" y="-155.0">
+		</FB>
+		<FB Name="F_CONCAT" Type="F_CONCAT" Comment="" x="1585.0" y="-580.0">
+		</FB>
+		<FB Name="E_REND" Type="E_REND" Comment="" x="675.0" y="-815.0">
+		</FB>
+		<FB Name="WSTRING2WSTRING_2" Type="WSTRING2WSTRING" Comment="" x="2585.0" y="-580.0">
+		</FB>
+		<EventConnections>
+			<Connection Source="WSTRING2WSTRING.CNF" Destination="E_REND.EI1" Comment=""/>
+			<Connection Source="WSTRING2WSTRING_1.CNF" Destination="E_REND.EI2" Comment="" dx1="55.0"/>
+			<Connection Source="E_REND.EO" Destination="F_CONCAT.REQ" Comment="" dx1="55.0"/>
+			<Connection Source="REQ" Destination="WSTRING2WSTRING.REQ" Comment="" dx1="180.0"/>
+			<Connection Source="REQ" Destination="WSTRING2WSTRING_1.REQ" Comment="" dx1="305.0"/>
+			<Connection Source="F_CONCAT.CNF" Destination="WSTRING2WSTRING_2.REQ" Comment=""/>
+			<Connection Source="WSTRING2WSTRING_2.CNF" Destination="CNF" Comment="" dx1="1745.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="WSTRING2WSTRING.OUT" Destination="F_CONCAT.IN1" Comment="" dx1="105.0"/>
+			<Connection Source="WSTRING2WSTRING_1.OUT" Destination="F_CONCAT.IN2" Comment="" dx1="965.0"/>
+			<Connection Source="LEFT" Destination="WSTRING2WSTRING.IN" Comment="" dx1="180.0"/>
+			<Connection Source="RIGHT" Destination="WSTRING2WSTRING_1.IN" Comment="" dx1="180.0"/>
+			<Connection Source="F_CONCAT.OUT" Destination="WSTRING2WSTRING_2.IN" Comment="" dx1="55.0"/>
+			<Connection Source="WSTRING2WSTRING_2.OUT" Destination="OUT" Comment="" dx1="1745.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>

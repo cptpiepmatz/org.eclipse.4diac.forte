@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="ACTION_SERVER_FEEDBACK_MESSAGE" Comment="">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="Tim Hesse" Date="2023-04-02">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="INIT" Type="Event" Comment="Initialization Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="124"/>
+			</SubAppEvent>
+			<SubAppEvent Name="REQ" Type="Event" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="INITO" Type="Event" Comment="Initialization Confirm">
+				<Attribute Name="YPOSITION" Type="STRING" Value="342"/>
+			</SubAppEvent>
+			<SubAppEvent Name="CNF" Type="Event" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="QI" Type="BOOL" Comment="Input event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="8"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_NAME" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="58"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_TYPE" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="239"/>
+			</VarDeclaration>
+			<VarDeclaration Name="PUB_DATA" Type="ANY" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="141"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="QO" Type="BOOL" Comment="Output event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+			<VarDeclaration Name="STATUS" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<FB Name="WSTRING2WSTRING" Type="WSTRING2WSTRING" Comment="" x="270.0" y="1570.0">
+			<Parameter Name="IN" Value="&quot;/_action/feedback&quot;"/>
+		</FB>
+		<FB Name="E_REND_3" Type="E_REND" Comment="" x="1590.0" y="910.0">
+		</FB>
+		<FB Name="WSTRING2WSTRING_1" Type="WSTRING2WSTRING" Comment="" x="225.0" y="2865.0">
+			<Parameter Name="IN" Value="&quot;_FeedbackMessage&quot;"/>
+		</FB>
+		<FB Name="F_CONCAT" Type="F_CONCAT" Comment="" x="2505.0" y="1145.0">
+		</FB>
+		<FB Name="WSTRING2WSTRING_3" Type="WSTRING2WSTRING" Comment="" x="-155.0" y="2205.0">
+		</FB>
+		<FB Name="E_REND_2" Type="E_REND" Comment="" x="3510.0" y="185.0">
+		</FB>
+		<FB Name="WSTRING2WSTRING_2" Type="WSTRING2WSTRING" Comment="" x="-155.0" y="910.0">
+		</FB>
+		<FB Name="E_REND_1" Type="E_REND" Comment="" x="1590.0" y="2205.0">
+		</FB>
+		<FB Name="F_CONCAT_1" Type="F_CONCAT" Comment="" x="2505.0" y="2440.0">
+		</FB>
+		<SubApp Name="MSG_PUBLISHER" Type="MSG_PUBLISHER" Comment="" x="4425.0" y="1615.0">
+		</SubApp>
+		<EventConnections>
+			<Connection Source="WSTRING2WSTRING_3.CNF" Destination="E_REND_1.EI1" Comment=""/>
+			<Connection Source="F_CONCAT.CNF" Destination="E_REND_2.EI1" Comment="" dx1="55.0"/>
+			<Connection Source="F_CONCAT_1.CNF" Destination="E_REND_2.EI2" Comment="" dx1="105.0"/>
+			<Connection Source="WSTRING2WSTRING_1.CNF" Destination="E_REND_1.EI2" Comment="" dx1="105.0"/>
+			<Connection Source="E_REND_1.EO" Destination="F_CONCAT_1.REQ" Comment="" dx1="55.0"/>
+			<Connection Source="WSTRING2WSTRING_2.CNF" Destination="E_REND_3.EI1" Comment=""/>
+			<Connection Source="E_REND_3.EO" Destination="F_CONCAT.REQ" Comment="" dx1="55.0"/>
+			<Connection Source="WSTRING2WSTRING.CNF" Destination="E_REND_3.EI2" Comment="" dx1="55.0"/>
+			<Connection Source="E_REND_2.EO" Destination="MSG_PUBLISHER.INIT" Comment="" dx1="105.0"/>
+			<Connection Source="INIT" Destination="WSTRING2WSTRING_2.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="INIT" Destination="WSTRING2WSTRING_3.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="INIT" Destination="WSTRING2WSTRING_1.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="INIT" Destination="WSTRING2WSTRING.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="REQ" Destination="MSG_PUBLISHER.REQ" Comment="" dx1="5070.0"/>
+			<Connection Source="MSG_PUBLISHER.INITO" Destination="INITO" Comment="" dx1="855.0"/>
+			<Connection Source="MSG_PUBLISHER.CNF" Destination="CNF" Comment="" dx1="855.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="WSTRING2WSTRING_3.OUT" Destination="F_CONCAT_1.IN1" Comment="" dx1="535.0"/>
+			<Connection Source="WSTRING2WSTRING_2.OUT" Destination="F_CONCAT.IN1" Comment="" dx1="535.0"/>
+			<Connection Source="WSTRING2WSTRING_1.OUT" Destination="F_CONCAT_1.IN2" Comment="" dx1="1020.0"/>
+			<Connection Source="WSTRING2WSTRING.OUT" Destination="F_CONCAT.IN2" Comment="" dx1="970.0"/>
+			<Connection Source="F_CONCAT.OUT" Destination="MSG_PUBLISHER.TOPIC_NAME" Comment="" dx1="155.0" dx2="350.0" dy="630.0"/>
+			<Connection Source="F_CONCAT_1.OUT" Destination="MSG_PUBLISHER.TOPIC_TYPE" Comment="" dx1="970.0"/>
+			<Connection Source="TOPIC_NAME" Destination="WSTRING2WSTRING_2.IN" Comment="" dx1="420.0"/>
+			<Connection Source="TOPIC_TYPE" Destination="WSTRING2WSTRING_3.IN" Comment="" dx1="420.0"/>
+			<Connection Source="PUB_DATA" Destination="MSG_PUBLISHER.PUB_DATA" Comment="" dx1="5120.0"/>
+			<Connection Source="QI" Destination="MSG_PUBLISHER.QI" Comment="" dx1="305.0"/>
+			<Connection Source="MSG_PUBLISHER.QO" Destination="QO" Comment="" dx1="855.0"/>
+			<Connection Source="MSG_PUBLISHER.STATUS" Destination="STATUS" Comment="" dx1="855.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>

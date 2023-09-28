@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="ACTION_CLIENT_SEND_GOAL" Comment="">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="Tim Hesse" Date="2023-03-23">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="INIT" Type="Event" Comment="Initialization Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="20"/>
+			</SubAppEvent>
+			<SubAppEvent Name="REQ" Type="Event" Comment="Normal Execution Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="INITO" Type="Event" Comment="Initialization Confirm">
+				<Attribute Name="YPOSITION" Type="STRING" Value="104"/>
+			</SubAppEvent>
+			<SubAppEvent Name="CNF" Type="Event" Comment="Execution Confirmation">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="QI" Type="BOOL" Comment="Input event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="8"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_NAME" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="58"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_TYPE" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="143"/>
+			</VarDeclaration>
+			<VarDeclaration Name="REQ_DATA" Type="ANY" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="52"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="QO" Type="BOOL" Comment="Output event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+			<VarDeclaration Name="STATUS" Type="WSTRING" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="RES_DATA" Type="ANY" Comment="">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<SubApp Name="SRV_CLIENT" Type="SRV_CLIENT" Comment="" x="-5490.0" y="425.0">
+		</SubApp>
+		<SubApp Name="CONCAT_WSTRING" Type="CONCAT_WSTRING" Comment="" x="-7685.0" y="390.0">
+			<Parameter Name="RIGHT" Value="&quot;/_action/send_goal&quot;"/>
+		</SubApp>
+		<SubApp Name="CONCAT_WSTRING_1" Type="CONCAT_WSTRING" Comment="" x="-8090.0" y="1205.0">
+			<Parameter Name="RIGHT" Value="&quot;_SendGoal&quot;"/>
+		</SubApp>
+		<FB Name="E_REND" Type="E_REND" Comment="" x="-6405.0" y="390.0">
+		</FB>
+		<EventConnections>
+			<Connection Source="SRV_CLIENT.INITO" Destination="INITO" Comment="" dx1="2770.0"/>
+			<Connection Source="SRV_CLIENT.CNF" Destination="CNF" Comment="" dx1="2770.0"/>
+			<Connection Source="REQ" Destination="SRV_CLIENT.REQ" Comment="" dx1="3205.0"/>
+			<Connection Source="CONCAT_WSTRING.CNF" Destination="E_REND.EI1" Comment=""/>
+			<Connection Source="CONCAT_WSTRING_1.CNF" Destination="E_REND.EI2" Comment="" dx1="460.0"/>
+			<Connection Source="E_REND.EO" Destination="SRV_CLIENT.INIT" Comment="" dx1="55.0"/>
+			<Connection Source="INIT" Destination="CONCAT_WSTRING.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="INIT" Destination="CONCAT_WSTRING_1.REQ" Comment="" dx1="355.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="SRV_CLIENT.QO" Destination="QO" Comment="" dx1="2770.0"/>
+			<Connection Source="SRV_CLIENT.STATUS" Destination="STATUS" Comment="" dx1="2770.0"/>
+			<Connection Source="SRV_CLIENT.RES_DATA" Destination="RES_DATA" Comment="" dx1="2770.0"/>
+			<Connection Source="REQ_DATA" Destination="SRV_CLIENT.REQ_DATA" Comment="" dx1="3255.0"/>
+			<Connection Source="QI" Destination="SRV_CLIENT.QI" Comment="" dx1="305.0" dx2="300.0" dy="1465.0"/>
+			<Connection Source="TOPIC_NAME" Destination="CONCAT_WSTRING.LEFT" Comment="" dx1="60.0" dx2="60.0" dy="-100.0"/>
+			<Connection Source="TOPIC_TYPE" Destination="CONCAT_WSTRING_1.LEFT" Comment="" dx1="60.0" dx2="60.0" dy="-70.0"/>
+			<Connection Source="CONCAT_WSTRING.OUT" Destination="SRV_CLIENT.TOPIC_NAME" Comment="" dx1="105.0"/>
+			<Connection Source="CONCAT_WSTRING_1.OUT" Destination="SRV_CLIENT.TOPIC_TYPE" Comment="" dx1="1380.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="DDS_CLIENT_WITH_MATCHING" Comment="Wrapper for DDS Publisher and Subscriber Pair as a Client">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="Tim Hesse" Date="2023-03-15">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="INIT" Type="Event" Comment="Initialization Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="20"/>
+			</SubAppEvent>
+			<SubAppEvent Name="REQ" Type="Event" Comment="Normal Execution Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="INITO" Type="Event" Comment="Initialization Confirm">
+				<Attribute Name="YPOSITION" Type="STRING" Value="118"/>
+			</SubAppEvent>
+			<SubAppEvent Name="CNF" Type="Event" Comment="Execution Confirmation">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+			<SubAppEvent Name="MATCHED" Type="Event" Comment="">
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="QI" Type="BOOL" Comment="Input event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="8"/>
+			</VarDeclaration>
+			<VarDeclaration Name="REQ_TOPIC" Type="WSTRING" Comment="Request DDS Topic">
+				<Attribute Name="YPOSITION" Type="STRING" Value="98"/>
+			</VarDeclaration>
+			<VarDeclaration Name="REQ_TYPE" Type="WSTRING" Comment="Request DDS Type">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="RES_TOPIC" Type="WSTRING" Comment="Response DDS Topic">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="RES_TYPE" Type="WSTRING" Comment="Response DDS Type">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="REQ_DATA" Type="ANY" Comment="Request Data">
+				<Attribute Name="YPOSITION" Type="STRING" Value="7"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="QO" Type="BOOL" Comment="Output event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+			<VarDeclaration Name="STATUS" Type="WSTRING" Comment="Service Status">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="RES_DATA" Type="ANY" Comment="Response Data">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="MATCHES" Type="ANY" Comment=""/>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<FB Name="CONSTRUCT_DDS_ID" Type="CONSTRUCT_DDS_ID" Comment="" x="1360.0" y="-510.0">
+		</FB>
+		<FB Name="CLIENT_1" Type="CLIENT_1" Comment="" x="2720.0" y="-510.0">
+		</FB>
+		<EventConnections>
+			<Connection Source="CONSTRUCT_DDS_ID.CNF" Destination="CLIENT_1.INIT" Comment=""/>
+			<Connection Source="REQ" Destination="CLIENT_1.REQ" Comment="" dx1="1415.0"/>
+			<Connection Source="CLIENT_1.INITO" Destination="INITO" Comment="" dx1="835.0"/>
+			<Connection Source="CLIENT_1.CNF" Destination="CNF" Comment="" dx1="835.0"/>
+			<Connection Source="INIT" Destination="CONSTRUCT_DDS_ID.REQ2" Comment="" dx1="305.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="REQ_TOPIC" Destination="CONSTRUCT_DDS_ID.TOPIC_L" Comment="" dx1="180.0"/>
+			<Connection Source="REQ_TYPE" Destination="CONSTRUCT_DDS_ID.TYPE_L" Comment="" dx1="180.0"/>
+			<Connection Source="CLIENT_1.QO" Destination="QO" Comment="" dx1="835.0"/>
+			<Connection Source="CLIENT_1.STATUS" Destination="STATUS" Comment="" dx1="835.0"/>
+			<Connection Source="CONSTRUCT_DDS_ID.ID" Destination="CLIENT_1.ID" Comment="" dx1="55.0"/>
+			<Connection Source="QI" Destination="CLIENT_1.QI" Comment="" dx1="1365.0"/>
+			<Connection Source="REQ_DATA" Destination="CLIENT_1.SD_1" Comment="" dx1="1365.0"/>
+			<Connection Source="RES_TOPIC" Destination="CONSTRUCT_DDS_ID.TOPIC_R" Comment="" dx1="180.0"/>
+			<Connection Source="RES_TYPE" Destination="CONSTRUCT_DDS_ID.TYPE_R" Comment="" dx1="180.0"/>
+			<Connection Source="CLIENT_1.RD_1" Destination="RES_DATA" Comment="" dx1="835.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubAppType Name="MSG_SUBSCRIBER" Comment="ROS 2 MSG Subscriber">
+	<Identification Standard="61499-2">
+	</Identification>
+	<VersionInfo Version="1.0" Author="Tim Hesse" Date="2023-03-14">
+	</VersionInfo>
+	<SubAppInterfaceList>
+		<SubAppEventInputs>
+			<SubAppEvent Name="INIT" Type="Event" Comment="Initialization Request">
+				<Attribute Name="YPOSITION" Type="STRING" Value="20"/>
+			</SubAppEvent>
+			<SubAppEvent Name="RSP" Type="Event" Comment="Application Response to IND">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventInputs>
+		<SubAppEventOutputs>
+			<SubAppEvent Name="INITO" Type="Event" Comment="Initialization Confirm">
+				<Attribute Name="YPOSITION" Type="STRING" Value="105"/>
+			</SubAppEvent>
+			<SubAppEvent Name="IND" Type="Event" Comment="Confirmation of Requested Service">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</SubAppEvent>
+		</SubAppEventOutputs>
+		<InputVars>
+			<VarDeclaration Name="QI" Type="BOOL" Comment="Input event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="8"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_NAME" Type="WSTRING" Comment="ROS 2 Topic Name">
+				<Attribute Name="YPOSITION" Type="STRING" Value="78"/>
+			</VarDeclaration>
+			<VarDeclaration Name="TOPIC_TYPE" Type="WSTRING" Comment="ROS 2 Topic Type">
+				<Attribute Name="YPOSITION" Type="STRING" Value="143"/>
+			</VarDeclaration>
+		</InputVars>
+		<OutputVars>
+			<VarDeclaration Name="QO" Type="BOOL" Comment="Output event qualifier">
+				<Attribute Name="YPOSITION" Type="STRING" Value="30"/>
+			</VarDeclaration>
+			<VarDeclaration Name="STATUS" Type="WSTRING" Comment="Service Status">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+			<VarDeclaration Name="SUB_DATA" Type="ANY" Comment="Subscribed Data">
+				<Attribute Name="YPOSITION" Type="STRING" Value="0"/>
+			</VarDeclaration>
+		</OutputVars>
+	</SubAppInterfaceList>
+	<SubAppNetwork>
+		<FB Name="CONSTRUCT_DDS_TYPE" Type="CONSTRUCT_DDS_TYPE" Comment="" x="-385.0" y="305.0">
+			<Parameter Name="SUFFIX" Value="&quot;_&quot;"/>
+		</FB>
+		<FB Name="E_REND" Type="E_REND" Comment="" x="1110.0" y="-610.0">
+		</FB>
+		<SubApp Name="DDS_SUB" Type="DDS_SUB" Comment="" x="2020.0" y="-575.0">
+		</SubApp>
+		<SubApp Name="CONSTRUCT_DDS_TOPIC" Type="CONSTRUCT_DDS_TOPIC" Comment="" x="-385.0" y="-610.0">
+			<Parameter Name="PREFIX" Value="&quot;rt&quot;"/>
+			<Parameter Name="SUFFIX" Value="&quot;&quot;"/>
+		</SubApp>
+		<EventConnections>
+			<Connection Source="CONSTRUCT_DDS_TYPE.CNF" Destination="E_REND.EI2" Comment="" dx1="100.0"/>
+			<Connection Source="INIT" Destination="CONSTRUCT_DDS_TYPE.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="E_REND.EO" Destination="DDS_SUB.INIT" Comment="" dx1="55.0"/>
+			<Connection Source="DDS_SUB.IND" Destination="IND" Comment="" dx1="2130.0"/>
+			<Connection Source="DDS_SUB.INITO" Destination="INITO" Comment="" dx1="2130.0"/>
+			<Connection Source="INIT" Destination="CONSTRUCT_DDS_TOPIC.REQ" Comment="" dx1="355.0"/>
+			<Connection Source="CONSTRUCT_DDS_TOPIC.CNF" Destination="E_REND.EI1" Comment=""/>
+			<Connection Source="RSP" Destination="DDS_SUB.RSP" Comment="" dx1="2715.0"/>
+		</EventConnections>
+		<DataConnections>
+			<Connection Source="TOPIC_TYPE" Destination="CONSTRUCT_DDS_TYPE.ROS2_TYPE" Comment="" dx1="310.0"/>
+			<Connection Source="CONSTRUCT_DDS_TYPE.DDS_TYPE" Destination="DDS_SUB.TYPE" Comment="" dx1="1060.0"/>
+			<Connection Source="DDS_SUB.SUB_DATA" Destination="SUB_DATA" Comment="" dx1="2130.0"/>
+			<Connection Source="DDS_SUB.STATUS" Destination="STATUS" Comment="" dx1="2130.0"/>
+			<Connection Source="DDS_SUB.QO" Destination="QO" Comment="" dx1="2130.0"/>
+			<Connection Source="QI" Destination="DDS_SUB.QI" Comment="" dx1="250.0" dx2="350.0" dy="1660.0"/>
+			<Connection Source="TOPIC_NAME" Destination="CONSTRUCT_DDS_TOPIC.ROS2_TOPIC" Comment="" dx1="310.0"/>
+			<Connection Source="CONSTRUCT_DDS_TOPIC.DDS_TOPIC" Destination="DDS_SUB.TOPIC" Comment="" dx1="105.0"/>
+		</DataConnections>
+	</SubAppNetwork>
+</SubAppType>
