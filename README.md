@@ -1,6 +1,14 @@
-#Eclipse 4diac FORTE
+# Eclipse 4diac FORTE
 
 Eclipse 4diac(TM) FORTE is a run-time environment for executing IEC 61499 control applications developed with 4diac IDE. 4diac FORTE is written in C++ and highly portable. It can be compiled for many different operating systems and especially targets embedded systems like PLCs.
+
+## impl-dds Branch
+
+This branch is the result of my bachelor's thesis.
+It implements a communication bridge between ROS (Humble) and this 4diac FORTE.
+It uses FastDDS 2.3.6 (version used for that ROS version) to communicate.
+
+The work can be found [here](https://cptpiepmatz.de/ba-tim-hesse.pdf).
 
 ## License
 
